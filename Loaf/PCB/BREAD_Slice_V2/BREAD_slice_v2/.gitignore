@@ -1,0 +1,4 @@
+BREAD_slice_v2-backups/
+*.lck
+_autosave*
+\#auto_saved_files\#
