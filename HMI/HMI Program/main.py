@@ -1,9 +1,10 @@
 import sys, time, array
-import pygame, gif_pygame
+import pygame, gif_pygame, pygame.camera
 import screenElements
 
 # Initialize Pygame
 pygame.init()
+pygame.camera.init()
 
 #Screen Vars
 clock = pygame.time.Clock()
@@ -12,11 +13,12 @@ objects = []
 GUIScale = (int) (1)
 
 #Screen Flags
-BootFlag = 1
+BootFlag = 0
 HomeFlag = 1
 CamFlag = 0
 ConveyorFlag = 0
 FaultFlag = 0
+camDetected = 0;
 
 #Conveyor Vars
 Speed = 0
@@ -54,9 +56,18 @@ NORMAL_COLOR = (50, 150, 250)
 HOVER_COLOR = (30, 100, 200)
 PRESS_COLOR = (0, 50, 75)
 
+#Camera setup
+camlist = pygame.camera.list_cameras()
+if camlist:
+    cam = pygame.camera.Camera(camlist[0],(640,480))
+    camDetected = 1
+
+if(camDetected == 1):
+    cam.start()
+    image = cam.get_image()
+
 #Make button
 font = pygame.font.SysFont('Arial', ButtonFontSize)
-test_button = screenElements.Button("Click Me!", 200, 150, ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
 #Make text
 font = pygame.font.SysFont('Arial', 30)
@@ -71,23 +82,72 @@ def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN 
 def HomeScreen(): #Screen for elements of the home screen
     screen.fill(BG_COLOR)
     screen.blit(text, ((int) ((width/8)*GUIScale), (int) ((height/10)*GUIScale)-40))
-    test_button.draw(screen)
+    cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    cameraButton.draw(screen)
     
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
             
-        if test_button.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            print("Test Button!")
+        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            if(camDetected):
+                global CamFlag
+                CamFlag = 1
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+    #Update frame buffer
+    pygame.display.update()
+    clock.tick(fps)
     
 def CamScreen(): #Screen for elements of the camera view screen
-    print("hi")
+    screen.fill(WHITE)
+    image = cam.get_image()
+    screen.blit(image, ((width-image.width)/2, (height-image.height)/2))
+    cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    cameraButton.draw(screen)
+
+    #Handle events relating to the home screen, and only the home screen
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            global CamFlag
+            CamFlag = 0
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+    #Update frame buffer
+    pygame.display.update()
+    clock.tick(fps)
 
 def ConveyorScreen(): #Screen for elements of the conveyor control screen
     print("hi")
 
-def FaultScreen(): ##Screen for elements of the fault screen
+    for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+    #Update frame buffer
+    pygame.display.update()
+    clock.tick(fps)
+
+def FaultScreen(): #Screen for elements of the fault screen
     screen.fill(RED)
     font = pygame.font.SysFont('Arial', 60)
     text = font.render("A FAULT HAS OCCURED", True, WHITE)
@@ -95,7 +155,7 @@ def FaultScreen(): ##Screen for elements of the fault screen
     text = font.render("PLEASE DIAGNOSE AND RESTART", True, WHITE)
     screen.blit(text, ((int) (((width-text.width)/2)), (int) (((height-text.height)/2) + text.height/2)))
     
-    play_square_tone(440, 1500)  # Play 440Hz for 1500ms
+    evil_noise()  #Play 440Hz for 1500ms
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -106,23 +166,23 @@ def FaultScreen(): ##Screen for elements of the fault screen
     pygame.display.update()
     clock.tick(fps)
     
-def play_square_tone(frequency, duration_ms):
+def evil_noise():
     sample_rate = 44100
-    period = int(sample_rate / frequency)
+    period = int(sample_rate / 440)
 
-    # Build one full wavelength cycle (half high amplitude, half low)
+    #Build one full wavelength cycle (half high amplitude, half low)
     amplitude = 2**15 - 1  # Max for 16-bit signed int
     samples = array.array("h", [0] * period)
     for i in range(period):
         samples[i] = amplitude if i < period / 2 else -amplitude
 
-    # Turn the cycle into a Sound object
+    #Turn the cycle into a Sound object
     sound = pygame.mixer.Sound(buffer=samples)
     sound.set_volume(0.125)
 
-    # Loop the short buffer sound to fill the requested duration
+    #Loop the short buffer sound to fill the requested duration
     sound.play(loops=-1)
-    pygame.time.delay(duration_ms)
+    pygame.delay(1000)
     sound.stop()
 
 #Main Game Loop
@@ -143,19 +203,17 @@ while True:
     #First and foremost check if there is a fault flag raised, and intentionally catch the entire program if there is.
     while(FaultFlag):
         FaultScreen()
-        
-    #Home screen rendering
-    if(HomeFlag):
-        HomeScreen()
     
     #Camera screen rendering
     if(CamFlag):
         CamScreen()
+        continue
         
     if(ConveyorFlag):
         ConveyorScreen()
-    
-    #Update frame buffer        
-    pygame.display.update()
-    clock.tick(fps)
+        continue
 
+    #Home screen rendering
+    if(HomeFlag):
+        HomeScreen()
+        continue
