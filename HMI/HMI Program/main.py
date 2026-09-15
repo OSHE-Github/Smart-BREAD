@@ -1,10 +1,10 @@
 import sys, time, array
-import pygame, gif_pygame, pygame.camera
+import pygame, gif_pygame
 import screenElements
+import cv2
 
 # Initialize Pygame
 pygame.init()
-pygame.camera.init()
 
 #Screen Vars
 clock = pygame.time.Clock()
@@ -18,7 +18,6 @@ HomeFlag = 1
 CamFlag = 0
 ConveyorFlag = 0
 FaultFlag = 0
-camDetected = 0;
 
 #Conveyor Vars
 Speed = 0
@@ -57,14 +56,20 @@ HOVER_COLOR = (30, 100, 200)
 PRESS_COLOR = (0, 50, 75)
 
 #Camera setup
-camlist = pygame.camera.list_cameras()
-if camlist:
-    cam = pygame.camera.Camera(camlist[0],(640,480))
-    camDetected = 1
+cam = cv2.VideoCapture(0)
+if not cam.isOpened():
+    print("Error: Webcam could not be opened.")
+    sys.exit()
 
-if(camDetected == 1):
-    cam.start()
-    image = cam.get_image()
+cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+if cam.isOpened():
+    # Read one dummy frame to prime the matrix buffer completely
+    success, _ = cam.read()
+    print(f"Camera verified. OS Backend connected to index {0}. Working: {success}")
+else:
+    print("fuck")
 
 #Make button
 font = pygame.font.SysFont('Arial', ButtonFontSize)
@@ -91,9 +96,8 @@ def HomeScreen(): #Screen for elements of the home screen
             sys.exit()
             
         if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            if(camDetected):
-                global CamFlag
-                CamFlag = 1
+            global CamFlag
+            CamFlag = 1
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -105,9 +109,16 @@ def HomeScreen(): #Screen for elements of the home screen
     clock.tick(fps)
     
 def CamScreen(): #Screen for elements of the camera view screen
-    screen.fill(WHITE)
-    image = cam.get_image()
-    screen.blit(image, ((width-image.width)/2, (height-image.height)/2))
+    screen.fill(BG_COLOR)
+    global cam
+
+    #Read and convert camera feed
+    ret, frame = cam.read()
+    if ret and frame is not None:
+        image = cv2topygame(frame)
+
+    #Display camera feed and other onscreen elements
+    screen.blit(image, (((width-image.width)/2), ((height-image.height)/2)))
     cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     cameraButton.draw(screen)
 
@@ -184,6 +195,24 @@ def evil_noise():
     sound.play(loops=-1)
     pygame.delay(1000)
     sound.stop()
+
+def cv2topygame(opencv_image):
+    # Ensure a valid matrix array exists before running transformations
+    if opencv_image is None or not hasattr(opencv_image, 'shape') or opencv_image.size == 0:
+        return None
+
+    try:
+        # 1. Convert native BGR color matrix to RGB
+        rgb_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB)
+
+        # 2. Swap axis 0 and 1 because OpenCV maps (Height, Width) and Pygame expects (Width, Height)
+        pygame_image = rgb_image.swapaxes(0, 1)
+
+        # 3. Create surface direct from memory buffer
+        return pygame.surfarray.make_surface(pygame_image)
+    except Exception as e:
+        print(f"Error converting frame: {e}")
+        return None
 
 #Main Game Loop
 while True:
