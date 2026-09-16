@@ -1,4 +1,5 @@
 import sys, time, array
+from tkinter import font
 import pygame, gif_pygame
 import screenElements
 import cv2
@@ -145,16 +146,28 @@ def CamScreen(): #Screen for elements of the camera view screen
 def ConveyorScreen(): #Screen for elements of the conveyor control screen
     global Speed
     global Direction
+
+    font = pygame.font.SysFont('Arial', 40)
+    setSpeedText = font.render(f"Set Speed: {Speed}", True, BORDER_COLOR)
+    mesSpeedText = font.render("Measured Speed:", True, BORDER_COLOR)
+    objText = font.render("Objects Sorted:", True, BORDER_COLOR)
+
+
     screen.fill(BG_COLOR)
     drawBorders()
 
+    screen.blit(setSpeedText, ((int) (0 + 0.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
+    screen.blit(mesSpeedText, ((int) (0 + 1.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
+    screen.blit(objText, ((int) (0 + 2.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
+
     homeButton = screenElements.Button("Home", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-    leftDirButton = screenElements.Button(Speed, (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    addSpeedButton = screenElements.Button("+", (int) (0 + ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    minusSpeedButton = screenElements.Button("-", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
+    #speedDisplay = screenElements.Text(f"Speed: {Speed}", (int) (0 + ButtonXScale/3), (int) (height - 4 * ButtonYScale - ButtonYScale/2), ButtonFontSize, WHITE)
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
@@ -167,10 +180,16 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
                 sys.exit()
 
         if addSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            Speed = Speed + 1
+            if Speed < 100:
+                Speed = Speed + 1
+            else:
+                Speed = 100
 
         if minusSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-           Speed = Speed - 1
+            if Speed > 0:
+                Speed = Speed - 1
+            else:
+                Speed = 0
 
         if leftDirButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
             Direction = -1
@@ -182,10 +201,9 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
             global ConveyorFlag
             ConveyorFlag = 0
 
-
-    addSpeedButton.draw(screen)
-    minusSpeedButton.draw(screen)
     leftDirButton.draw(screen)
+    minusSpeedButton.draw(screen)
+    addSpeedButton.draw(screen)
     rightDirButton.draw(screen)
     homeButton.draw(screen)
 
