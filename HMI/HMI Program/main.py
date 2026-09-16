@@ -43,7 +43,8 @@ ButtonYScale = (int) ((height/5)*GUIScale)
 ButtonFontSize = (int) (ButtonYScale*0.4)
 
 #Colors
-BG_COLOR = (30, 30, 40)
+BG_COLOR = (245, 245, 220)
+BORDER_COLOR = (98, 49, 8)
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 RED = (255,0,0)
@@ -74,8 +75,9 @@ def HomeScreen(): #Screen for elements of the home screen
     font = pygame.font.SysFont('Arial', 30)
     text = font.render("Oooo, a button!", True, WHITE)
     screen.fill(BG_COLOR)
+    drawBorders()
     screen.blit(text, ((int) ((width/8)*GUIScale), (int) ((height/10)*GUIScale)-40))
-    cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
@@ -101,6 +103,7 @@ def CamScreen(): #Screen for elements of the camera view screen
     global cam
 
     screen.fill(BG_COLOR)
+    drawBorders()
 
     #Read and convert camera feed
     ret, frame = cam.read()
@@ -109,7 +112,7 @@ def CamScreen(): #Screen for elements of the camera view screen
 
     #Display camera feed and other onscreen elements
     screen.blit(image, (((width-image.width)/2), ((height-image.height)/2)))
-    cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     #Handle events relating to the home screen, and only the home screen
     for event in pygame.event.get():
@@ -205,6 +208,13 @@ def cv2topygame(opencv_image):
     except Exception as e:
         print(f"Error converting frame: {e}")
         return None
+
+def drawBorders():
+    bDiv = 50
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, width, height/bDiv), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, height - height/bDiv, width, height/bDiv), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, height/bDiv, height), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(width - height/bDiv, 0, height/bDiv, height), border_radius=0)
 
 #End of init, start rendering
 initTime = time.perf_counter()
