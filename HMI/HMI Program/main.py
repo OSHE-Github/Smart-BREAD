@@ -32,19 +32,15 @@ width, height = pygame.display.get_surface().get_size()
 bootAnimTimings = bootAnim.get_durations()
 bootAnimLength = 0;
 pygame.mixer.pre_init(44100, -16, 1, 1024)
-pygame.init()
 
 #Calculate boot animation total length.
 for i in bootAnimTimings:
     bootAnimLength = bootAnimLength + i
 
 #Button Scale & Placement Grid Vars
-ButtonXScale = (int) ((width/8)*GUIScale)
-ButtonYScale = (int) ((height/10)*GUIScale)
+ButtonXScale = (int) ((width/4)*GUIScale)
+ButtonYScale = (int) ((height/5)*GUIScale)
 ButtonFontSize = (int) (ButtonYScale*0.4)
-
-GridCellWidth = width/6
-GridCellHeight = height/6
 
 #Colors
 BG_COLOR = (30, 30, 40)
@@ -69,48 +65,42 @@ if cam.isOpened():
     success, _ = cam.read()
     print(f"Camera verified. OS Backend connected to index {0}. Working: {success}")
 else:
-    print("fuck")
-
-#Make button
-font = pygame.font.SysFont('Arial', ButtonFontSize)
-
-#Make text
-font = pygame.font.SysFont('Arial', 30)
-text = font.render("Oooo, a button!", True, WHITE)
-
-#End of init, start rendering
-initTime = time.perf_counter()
+    print("fuck")\
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
     print("hi")
 
 def HomeScreen(): #Screen for elements of the home screen
+    font = pygame.font.SysFont('Arial', 30)
+    text = font.render("Oooo, a button!", True, WHITE)
     screen.fill(BG_COLOR)
     screen.blit(text, ((int) ((width/8)*GUIScale), (int) ((height/10)*GUIScale)-40))
     cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    cameraButton.draw(screen)
-    
+
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-            
-        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            global CamFlag
-            CamFlag = 1
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
 
+        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            global CamFlag
+            CamFlag = 1
+
+    cameraButton.draw(screen)
+
     #Update frame buffer
     pygame.display.update()
     clock.tick(fps)
     
 def CamScreen(): #Screen for elements of the camera view screen
-    screen.fill(BG_COLOR)
     global cam
+
+    screen.fill(BG_COLOR)
 
     #Read and convert camera feed
     ret, frame = cam.read()
@@ -120,7 +110,6 @@ def CamScreen(): #Screen for elements of the camera view screen
     #Display camera feed and other onscreen elements
     screen.blit(image, (((width-image.width)/2), ((height-image.height)/2)))
     cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    cameraButton.draw(screen)
 
     #Handle events relating to the home screen, and only the home screen
     for event in pygame.event.get():
@@ -128,14 +117,16 @@ def CamScreen(): #Screen for elements of the camera view screen
             pygame.quit()
             sys.exit()
 
-        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            global CamFlag
-            CamFlag = 0
-
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+
+        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            global CamFlag
+            CamFlag = 0
+
+    cameraButton.draw(screen)
 
     #Update frame buffer
     pygame.display.update()
@@ -172,6 +163,11 @@ def FaultScreen(): #Screen for elements of the fault screen
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
             
     #Update frame buffer        
     pygame.display.update()
@@ -197,22 +193,21 @@ def evil_noise():
     sound.stop()
 
 def cv2topygame(opencv_image):
-    # Ensure a valid matrix array exists before running transformations
+    #Check if the image is even valid before trying
     if opencv_image is None or not hasattr(opencv_image, 'shape') or opencv_image.size == 0:
         return None
 
+    #Convert image from cv2 to pygame for display
     try:
-        # 1. Convert native BGR color matrix to RGB
         rgb_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB)
-
-        # 2. Swap axis 0 and 1 because OpenCV maps (Height, Width) and Pygame expects (Width, Height)
         pygame_image = rgb_image.swapaxes(0, 1)
-
-        # 3. Create surface direct from memory buffer
         return pygame.surfarray.make_surface(pygame_image)
     except Exception as e:
         print(f"Error converting frame: {e}")
         return None
+
+#End of init, start rendering
+initTime = time.perf_counter()
 
 #Main Game Loop
 while True:
