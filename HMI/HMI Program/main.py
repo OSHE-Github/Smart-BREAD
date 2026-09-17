@@ -152,7 +152,6 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     mesSpeedText = font.render("Measured Speed:", True, BORDER_COLOR)
     objText = font.render("Objects Sorted:", True, BORDER_COLOR)
 
-
     screen.fill(BG_COLOR)
     drawBorders()
 
@@ -160,14 +159,14 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     screen.blit(mesSpeedText, ((int) (0 + 1.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
     screen.blit(objText, ((int) (0 + 2.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
 
+    # Navigation
     homeButton = screenElements.Button("Home", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
+    # Belt Controls
     leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-
-    #speedDisplay = screenElements.Text(f"Speed: {Speed}", (int) (0 + ButtonXScale/3), (int) (height - 4 * ButtonYScale - ButtonYScale/2), ButtonFontSize, WHITE)
+    rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR) 
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
@@ -206,6 +205,9 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     addSpeedButton.draw(screen)
     rightDirButton.draw(screen)
     homeButton.draw(screen)
+   # pygame.draw.rect((screen), BORDER_COLOR, pygame.Rect(xCpos, yCpos, cWidth, cHeight))
+    gif_pygame.load("assets/OSHE.png").render(screen, ((int) ((width-gif_pygame.load("assets/OSHE.png").width - 50)), (int) ((height-gif_pygame.load("assets/OSHE.png").height-50))))
+    bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/2)))
 
     #Update frame buffer
     pygame.display.update()
