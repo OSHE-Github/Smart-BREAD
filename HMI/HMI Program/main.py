@@ -11,7 +11,6 @@ pygame.init()
 clock = pygame.time.Clock()
 fps = 60
 objects = []
-GUIScale = (int) (1)
 
 #Screen Flags
 BootFlag = 0
@@ -21,31 +20,45 @@ ConveyorFlag = 0
 FaultFlag = 0
 
 #Conveyor Vars
-Speed = 0
-Direction = 0
+speed = 0
+measSpeed = 0
+direction = 0
+numSorted = 0
+
+#Misc constants
+bDiv = 50
 
 #Window Setup
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN) #Fullscreen
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Bread HMI")
-pygame.display.set_icon(pygame.image.load('assets/icon.png'))
-bootAnim = gif_pygame.load("assets/boot_test_delete_later.gif")
 width, height = pygame.display.get_surface().get_size()
+
+#Image asset setup
+pygame.display.set_icon(pygame.image.load('assets/icon.png'))
+osheLogo = pygame.image.load("assets/OSHE Logo.png").convert_alpha()
+osheLogo = pygame.transform.scale(osheLogo, (osheLogo.width/10, osheLogo.height/10))
+owidth = osheLogo.width; oheight = osheLogo.height
+
+#Boot animation setup
+bootAnim = gif_pygame.load("assets/boot_test_delete_later.gif")
 bootAnimTimings = bootAnim.get_durations()
 bootAnimLength = 0;
-pygame.mixer.pre_init(44100, -16, 1, 1024)
 
 #Calculate boot animation total length.
 for i in bootAnimTimings:
     bootAnimLength = bootAnimLength + i
 
 #Button Scale & Placement Grid Vars
-ButtonXScale = (int) ((width/4)*GUIScale)
-ButtonYScale = (int) ((height/5)*GUIScale)
+ButtonXScale = (int) ((width/4))
+ButtonYScale = (int) ((height/5))
 ButtonFontSize = (int) (ButtonYScale*0.4)
+
+bordWidth = height/bDiv
 
 #Colors
 BG_COLOR = (245, 245, 220)
 BORDER_COLOR = (98, 49, 8)
+TEXT_FIELD_COLOR= (210, 180, 140)
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 RED = (255,0,0)
@@ -62,12 +75,9 @@ if not cam.isOpened():
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-if cam.isOpened():
-    # Read one dummy frame to prime the matrix buffer completely
-    success, _ = cam.read()
-    print(f"Camera verified. OS Backend connected to index {0}. Working: {success}")
-else:
-    print("fuck")\
+#Misc Setup
+pygame.mixer.pre_init(44100, -16, 1, 1024)
+
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
     print("hi")
@@ -77,7 +87,7 @@ def HomeScreen(): #Screen for elements of the home screen
     text = font.render("Oooo, a button!", True, WHITE)
     screen.fill(BG_COLOR)
     drawBorders()
-    screen.blit(text, ((int) ((width/8)*GUIScale), (int) ((height/10)*GUIScale)-40))
+    screen.blit(text, ((int) ((width/8)), (int) ((height/10))-40))
     cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     conveyorButton = screenElements.Button("Conveyor", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
@@ -144,31 +154,39 @@ def CamScreen(): #Screen for elements of the camera view screen
     clock.tick(fps)
 
 def ConveyorScreen(): #Screen for elements of the conveyor control screen
-    global Speed
-    global Direction
+    global speed
+    global direction
 
-    font = pygame.font.SysFont('Arial', 40)
-    setSpeedText = font.render(f"Set Speed: {Speed}", True, BORDER_COLOR)
-    mesSpeedText = font.render("Measured Speed:", True, BORDER_COLOR)
-    objText = font.render("Objects Sorted:", True, BORDER_COLOR)
-
+    #Draw background elements
     screen.fill(BG_COLOR)
     drawBorders()
 
-    screen.blit(setSpeedText, ((int) (0 + 0.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
-    screen.blit(mesSpeedText, ((int) (0 + 1.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
-    screen.blit(objText, ((int) (0 + 2.5 * ButtonXScale), (int) ((height/10)*GUIScale)-30))
+    #Define text to display
+    font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
+    setSpeedText = font.render(f"Set Speed: {speed}", True, BORDER_COLOR)
+    mesSpeedText = font.render("Measured Speed:", True, BORDER_COLOR)
+    objText = font.render("Objects Sorted:", True, BORDER_COLOR)
 
-    # Navigation
+    #Draw text onscreen
+    screen.blit(setSpeedText, ((int) (bordWidth*2), (int) ((height/10))-30))
+    screen.blit(mesSpeedText, ((int) (0 + 1.5 * ButtonXScale), (int) ((height/10))-30))
+    screen.blit(objText, ((int) (0 + 2.5 * ButtonXScale), (int) ((height/10))-30))
+
+    #Draw detail boxes onscreen
+    pygame.draw.rect(screen, TEXT_FIELD_COLOR, pygame.Rect(bordWidth*2, bordWidth*2, width/6, height/8), border_radius=0)
+
+
+    #Home button to go back to home menu
     homeButton = screenElements.Button("Home", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-    # Belt Controls
-    leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR) 
+    #Belt Controls
+    leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-    for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
+    #Event handlers for all of the buttons
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -179,16 +197,16 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
                 sys.exit()
 
         if addSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            if Speed < 100:
-                Speed = Speed + 1
+            if speed < 100:
+                speed = speed + 1
             else:
-                Speed = 100
+                speed = 100
 
         if minusSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
-            if Speed > 0:
-                Speed = Speed - 1
+            if speed > 0:
+                speed = speed - 1
             else:
-                Speed = 0
+                speed = 0
 
         if leftDirButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
             Direction = -1
@@ -200,13 +218,15 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
             global ConveyorFlag
             ConveyorFlag = 0
 
+    #Draw the buttons to the screen
     leftDirButton.draw(screen)
     minusSpeedButton.draw(screen)
     addSpeedButton.draw(screen)
     rightDirButton.draw(screen)
     homeButton.draw(screen)
-   # pygame.draw.rect((screen), BORDER_COLOR, pygame.Rect(xCpos, yCpos, cWidth, cHeight))
-    gif_pygame.load("assets/OSHE.png").render(screen, ((int) ((width-gif_pygame.load("assets/OSHE.png").width - 50)), (int) ((height-gif_pygame.load("assets/OSHE.png").height-50))))
+
+    #Load the OSHE logo to the bottom right of the screen
+    screen.blit(osheLogo, (width - bordWidth - owidth*1.1, height - bordWidth - oheight*1.1))
     bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/2)))
 
     #Update frame buffer
@@ -271,11 +291,11 @@ def cv2topygame(opencv_image):
         return None
 
 def drawBorders():
-    bDiv = 50
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, width, height/bDiv), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, height - height/bDiv, width, height/bDiv), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, height/bDiv, height), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(width - height/bDiv, 0, height/bDiv, height), border_radius=0)
+    global bDiv
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, width, bordWidth), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, height - bordWidth, width, bordWidth), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, bordWidth, height), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(width - bordWidth, 0, bordWidth, height), border_radius=0)
 
 #End of init, start rendering
 initTime = time.perf_counter()
