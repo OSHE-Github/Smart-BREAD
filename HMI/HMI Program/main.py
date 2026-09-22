@@ -3,7 +3,20 @@ from tkinter import font
 import pygame, gif_pygame
 import screenElements, CAN
 import cv2
-import array
+import os, psutil #For memory monitoring
+
+
+#Init memory monitor
+memDebug = 0;
+memDebugLoop = 0;
+if(memDebug | memDebugLoop):
+    process = psutil.Process(os.getpid())
+
+if(memDebug):
+    rss_memory = process.memory_info().rss
+    print(f"Starting Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+
 
 # Initialize Pygame
 pygame.init()
@@ -25,6 +38,10 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Bread HMI")
 width, height = pygame.display.get_surface().get_size()
 
+if(memDebug):
+    rss_memory = process.memory_info().rss
+    print(f"Window created!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
 #Image asset setup
 pygame.display.set_icon(pygame.image.load('assets/icon.png'))
 osheLogo = pygame.image.load("assets/OSHE Logo.png").convert_alpha()
@@ -39,6 +56,10 @@ bootAnimLength = 0;
 #Calculate boot animation total length.
 for i in bootAnimTimings:
     bootAnimLength = bootAnimLength + i
+
+if(memDebug):
+    rss_memory = process.memory_info().rss
+    print(f"Assets loaded! Memory Usage: {rss_memory / (1024**2):.2f} MB")
 
 #Button Scale & Placement Grid Vars
 ButtonXScale = (int) ((width/4))
@@ -67,6 +88,10 @@ if not cam.isOpened():
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
+if(memDebug):
+    rss_memory = process.memory_info().rss
+    print(f"Camera started!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
 #Static graphic setup
 boxY = bordWidth*5; boxWidth = width/12; boxHeight = height/16;
 ssBoxX = bordWidth*7; msBoxX = width/2 - width/24; osBoxX = width - bordWidth*14
@@ -91,6 +116,10 @@ leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale),
 minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+if(memDebug):
+    rss_memory = process.memory_info().rss
+    print(f"Static elements loaded!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
 
 
 #Misc Setup
@@ -337,7 +366,11 @@ while True:
         pygame.display.update()
         clock.tick(constArray[0])
         
-    #First and foremost check if there is a fault flag raised, and intentionally catch the entire program if there is.
+    if(memDebugLoop):
+        rss_memory = process.memory_info().rss
+        print(f"Current Process Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+    #First check if there is a fault flag raised, and intentionally catch the entire program if there is.
     while(flagArr[4]):
         FaultScreen()
     
