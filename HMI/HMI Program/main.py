@@ -26,7 +26,7 @@ clock = pygame.time.Clock()
 objects = []
 
 #Arrays of bytes
-flagArr = array.array("b", [0, 1, 0, 1, 0]) #Boot, Home, Cam, Conveyor, and Fault Flags in array form
+flagArr = array.array("b", [0, 1, 0, 0, 0, 1]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
 convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
 constArray = array.array("b", [60]) #FPS, bDiv,
 
@@ -112,10 +112,10 @@ osLabelX = osBoxX + boxWidth/2 - objText.width/2
 osLabelY = ssLabelY
 
 #Belt Controls
-leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
 if(memDebug):
     rss_memory = process.memory_info().rss
@@ -127,18 +127,37 @@ pygame.mixer.pre_init(44100, -16, 1, 1024)
 
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
-    print("hi")
+    global flagArr
+
+    screen.fill(BG_COLOR)
+    drawBorders()
+
+    font = pygame.font.SysFont('Arial', 30)
+    bread = font.render("Smart BREAD", True, BLACK)
+    booting = font.render("Booting...", True, BLACK)
+    screen.blit(bread, ((int) (((width - bread.get_width())/2)), (int) ((height/2)+osheLogo.get_height()/2)))
+    screen.blit(booting, ((int) (((width - booting.get_width())/2)), (int) ((height/2)+osheLogo.get_height()+booting.get_height())))
+    screen.blit(osheLogo, ((width - owidth)/2, (height - oheight)/2))
+
+    for event in pygame.event.get(): #Handle events relating to the boot screen, and only the boot screen
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
 
 def HomeScreen(): #Screen for elements of the home screen
     global flagArr
 
     font = pygame.font.SysFont('Arial', 30)
-    text = font.render("Oooo, a button!", True, WHITE)
     screen.fill(BG_COLOR)
     drawBorders()
-    screen.blit(text, ((int) ((width/8)), (int) ((height/10))-40))
     cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     conveyorButton = screenElements.Button("Conveyor", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    infoButton = screenElements.Button("Info", (int) (width/2 - ButtonXScale/2), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
@@ -157,8 +176,12 @@ def HomeScreen(): #Screen for elements of the home screen
         if conveyorButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
             flagArr[3] = 1
 
+        if infoButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            flagArr[5] = 1
+
     cameraButton.draw(screen)
     conveyorButton.draw(screen)
+    infoButton.draw(screen)
 
     #Update frame buffer
     pygame.display.update()
@@ -226,8 +249,8 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
     #Draw changing text onscreen
     screen.blit(speedText, (ssBoxX + boxWidth/2 - speedText.width/2, boxY + speedText.height/6))
-    screen.blit(measSpeedText, (msBoxX + boxWidth/2 - measSpeedText.width/2, boxY))
-    screen.blit(sortedCount, (osBoxX + boxWidth/2 - sortedCount.width/2, boxY))
+    screen.blit(measSpeedText, (msBoxX + boxWidth/2 - measSpeedText.width/2, boxY + measSpeedText.height/6))
+    screen.blit(sortedCount, (osBoxX + boxWidth/2 - sortedCount.width/2, boxY + sortedCount.height/6))
 
 
 
@@ -279,7 +302,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
     #Load the OSHE logo to the bottom right of the screen
     screen.blit(osheLogo, (width - bordWidth - owidth*1.1, height - bordWidth - oheight*1.1))
-    bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/2)))
+    bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/3)))
 
     #Update frame buffer
     pygame.display.update()
@@ -306,6 +329,34 @@ def FaultScreen(): #Screen for elements of the fault screen
                 sys.exit()
             
     #Update frame buffer        
+    pygame.display.update()
+    clock.tick(constArray[0])
+
+def InfoScreen():
+    global flagArr
+
+    screen.fill(BG_COLOR)
+    drawBorders()
+
+    homeButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+
+    for event in pygame.event.get(): #Handle events relating to the boot screen, and only the boot screen
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+            if homeButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+                flagArr[5] = 0
+
+    homeButton.draw(screen)
+
+    #Update frame buffer
     pygame.display.update()
     clock.tick(constArray[0])
     
@@ -354,8 +405,9 @@ initTime = time.perf_counter()
 #Main Game Loop
 while True:
     while(flagArr[0]): #Render boot animation
-        screen.fill(BLACK)
-        bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/2)))
+        #screen.fill(BLACK)
+        #bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/2)))
+        BootScreen()
         currentTime = time.perf_counter()
     
         #Check if boot animation has finished running
@@ -386,4 +438,9 @@ while True:
     #Home screen rendering
     if(flagArr[1]):
         HomeScreen()
+        continue
+
+    #Info screen rendering
+    if(flagArr[5]):
+        InfoScreen()
         continue
