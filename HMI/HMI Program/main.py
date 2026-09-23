@@ -7,7 +7,7 @@ import os, psutil #For memory monitoring
 
 
 #Init memory monitor
-memDebug = 0;
+memDebug = 1;
 memDebugLoop = 0;
 if(memDebug | memDebugLoop):
     process = psutil.Process(os.getpid())
