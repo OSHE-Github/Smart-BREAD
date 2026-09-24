@@ -5,4 +5,5 @@
   (lib (name "EEU_FC1H101")(type "KiCad")(uri "${KIPRJMOD}/../Footprints/EEU_FC1H101")(options "")(descr ""))
   (lib (name "ESP32_DEVKITC_32E")(type "KiCad")(uri "${KIPRJMOD}/../Footprints/ESP32_DEVKITC_32E")(options "")(descr ""))
   (lib (name "MCP2561FD_E_P")(type "KiCad")(uri "${KIPRJMOD}/../Footprints/MCP2561FD_E_P/KiCADv6/footprints.pretty")(options "")(descr ""))
+  (lib (name "Custom")(type "KiCad")(uri "${KIPRJMOD}/Custom.pretty")(options "")(descr ""))
 )
