@@ -75,7 +75,7 @@ TEXT_FIELD_COLOR= (210, 180, 140)
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 RED = (255,0,0)
-NORMAL_COLOR = (50, 150, 250)
+NORMAL_COLOR = (117, 35, 0)
 HOVER_COLOR = (30, 100, 200)
 PRESS_COLOR = (0, 50, 75)
 
@@ -160,6 +160,10 @@ def HomeScreen(): #Screen for elements of the home screen
     infoButton = screenElements.Button("Info", (int) (width/2 - ButtonXScale/2), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
 
+    cameraButton.update()
+    conveyorButton.update()
+    infoButton.update()
+
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -170,13 +174,13 @@ def HomeScreen(): #Screen for elements of the home screen
                 pygame.quit()
                 sys.exit()
 
-        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if cameraButton.handle_event(event):
             flagArr[2] = 1
 
-        if conveyorButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if conveyorButton.handle_event(event):
             flagArr[3] = 1
 
-        if infoButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if infoButton.handle_event(event):
             flagArr[5] = 1
 
     cameraButton.draw(screen)
@@ -214,7 +218,7 @@ def CamScreen(): #Screen for elements of the camera view screen
                 pygame.quit()
                 sys.exit()
 
-        if cameraButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if cameraButton.handle_event(event):
             flagArr[2] = 0
 
     cameraButton.draw(screen)
@@ -258,7 +262,11 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     #Home button to go back to home menu
     homeButton = screenElements.Button("Home", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-
+    leftDirButton.update()
+    minusSpeedButton.update()
+    addSpeedButton.update()
+    rightDirButton.update()
+    homeButton.update()
 
     #Event handlers for all of the buttons
     for event in pygame.event.get():
@@ -271,25 +279,25 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
                 pygame.quit()
                 sys.exit()
 
-        if addSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if addSpeedButton.handle_event(event):
             if convArr[0] < 100:
                 convArr[0] = convArr[0] + 1
             else:
                 convArr[0] = 100
 
-        if minusSpeedButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if minusSpeedButton.handle_event(event):
             if convArr[0] > 0:
                 convArr[0] = convArr[0] - 1
             else:
                 convArr[0] = 0
 
-        if leftDirButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if leftDirButton.handle_event(event):
             convArr[2] = -1
 
-        if rightDirButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if rightDirButton.handle_event(event):
             convArr[2] = 1
 
-        if homeButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+        if homeButton.handle_event(event):
             global ConveyorFlag
             flagArr[3] = 0
 
@@ -351,7 +359,7 @@ def InfoScreen():
                     pygame.quit()
                     sys.exit()
 
-            if homeButton.handle_event(event, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR):
+            if homeButton.handle_event(event):
                 flagArr[5] = 0
 
     homeButton.draw(screen)
