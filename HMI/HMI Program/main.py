@@ -125,6 +125,7 @@ if(memDebug):
 #Misc Setup
 pygame.mixer.pre_init(44100, -16, 1, 1024)
 
+CAN.sanity()
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
     global flagArr
@@ -237,8 +238,8 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
     #Define text to display
     font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
-    speedText = font.render(f"{convArr[0]}", True, BORDER_COLOR)
-    measSpeedText = font.render(f"{convArr[1]}", True, BORDER_COLOR)
+    speedText = font.render(f"{convArr[0]}%", True, BORDER_COLOR)
+    measSpeedText = font.render(f"{convArr[1]}%", True, BORDER_COLOR)
     sortedCount = font.render(f"{numSorted}", True, BORDER_COLOR)
 
     #Draw detail boxes onscreen
