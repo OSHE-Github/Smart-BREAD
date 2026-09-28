@@ -26,7 +26,7 @@ clock = pygame.time.Clock()
 objects = []
 
 #Arrays of bytes
-flagArr = array.array("b", [0, 1, 0, 0, 0, 1]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
+flagArr = array.array("b", [0, 1, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
 convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
 constArray = array.array("b", [60]) #FPS, bDiv,
 
@@ -444,12 +444,13 @@ while True:
         ConveyorScreen()
         continue
 
+    #Info screen rendering
+    if(flagArr[5]):
+        InfoScreen()
+        continue
+
     #Home screen rendering
     if(flagArr[1]):
         HomeScreen()
         continue
 
-    #Info screen rendering
-    if(flagArr[5]):
-        InfoScreen()
-        continue
