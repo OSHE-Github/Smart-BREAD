@@ -347,6 +347,16 @@ def InfoScreen():
     screen.fill(BG_COLOR)
     drawBorders()
 
+    font = pygame.font.SysFont('Arial', 60)
+    text = font.render("Smart-BREAD " \
+    "\n https://github.com/OSHE-Github/Smart-BREAD " \
+    "\n An Open Source Hardware Enterprise project " \
+    "\n Michigan Technological University " \
+    "\n Houghton, Michigan " \
+    "\n This project is lisecensed under ____", True, BORDER_COLOR)
+    screen.blit(text, ((int) (((width-text.width)/2)), (int) (((height-text.height)/2) - text.height/2)))
+
+
     homeButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
 
