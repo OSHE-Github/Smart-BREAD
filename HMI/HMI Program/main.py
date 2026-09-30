@@ -11,7 +11,7 @@ if timeDebug:
     start = time.perf_counter()
 
 #Enable threading
-multiThread = 1;
+multiThread = 0;
 threadLiving = array.array("b", [0,0])
 
 #Init memory monitor
@@ -107,7 +107,7 @@ def graphicInit():
     #Image asset setup
     pygame.display.set_icon(pygame.image.load('assets/icon.png'))
     osheLogo = pygame.image.load("assets/OSHE Logo.png").convert_alpha()
-    osheLogo = pygame.transform.scale(osheLogo, (osheLogo.width/10, osheLogo.height/10))
+    osheLogo = pygame.transform.scale(osheLogo, (width/5, height/4))
     owidth = osheLogo.width; oheight = osheLogo.height
 
     #Boot animation setup
@@ -129,8 +129,8 @@ def graphicInit():
 
     #Static text setup
     font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
-    setSpeedLabel = font.render("Set Speed", True, BORDER_COLOR) #Set speed label text
 
+    setSpeedLabel = font.render("Set Speed", True, BORDER_COLOR) #Set speed label text
     ssLabelX = (int) (ssBoxX + boxWidth/2 - setSpeedLabel.width/2) #Set speed label X precalc
     ssLabelY = (int) (boxY - setSpeedLabel.height - setSpeedLabel.height/6) #Set speed label Y precalc
 
@@ -265,7 +265,7 @@ def CamScreen(): #Screen for elements of the camera view screen
         image = cv2topygame(frame)
 
     #Display camera feed and other onscreen elements
-    screen.blit(image, (((width-image.width)/2), ((height-image.height)/2)))
+    screen.blit(image, (((width-image.width)/2), ((height-image.height)/3)))
     cameraButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     #Handle events relating to the home screen, and only the home screen
@@ -316,9 +316,6 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     screen.blit(speedText, (ssBoxX + boxWidth/2 - speedText.width/2, boxY + speedText.height/6))
     screen.blit(measSpeedText, (msBoxX + boxWidth/2 - measSpeedText.width/2, boxY + measSpeedText.height/6))
     screen.blit(sortedCount, (osBoxX + boxWidth/2 - sortedCount.width/2, boxY + sortedCount.height/6))
-
-
-
 
     #Home button to go back to home menu
     homeButton = screenElements.Button("Home", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
@@ -408,13 +405,14 @@ def InfoScreen():
     drawBorders()
 
     font = pygame.font.SysFont('Arial', 60)
-    text = font.render("Smart-BREAD " \
+    text = font.render(" Smart-BREAD " \
     "\n https://github.com/OSHE-Github/Smart-BREAD " \
     "\n An Open Source Hardware Enterprise project " \
     "\n Michigan Technological University " \
     "\n Houghton, Michigan " \
-    "\n This project is lisecensed under ____", True, BORDER_COLOR)
-    screen.blit(text, ((int) (((width-text.width)/2)), (int) (((height-text.height)/2) - text.height/2)))
+    "\n This program is lisecensed under:" \
+    "\n GNU Free Documentation License", True, BORDER_COLOR)
+    screen.blit(text, ((int) (((width-text.width)/10)), (int) (((height-text.height)/10))))
 
 
     homeButton = screenElements.Button("Home", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
