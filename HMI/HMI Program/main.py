@@ -1,10 +1,18 @@
-import sys, time, array
+import sys, time, array, cv2, numpy, threading
 from tkinter import font
 import pygame, gif_pygame
+import os, psutil
 import screenElements, CAN
-import cv2
-import os, psutil #For memory monitoring
 
+#Process time monitor
+timeDebug = 1
+start = 0
+if timeDebug:
+    start = time.perf_counter()
+
+#Enable threading
+multiThread = 1;
+threadLiving = array.array("b", [0,0])
 
 #Init memory monitor
 memDebug = 1;
@@ -16,116 +24,168 @@ if(memDebug):
     rss_memory = process.memory_info().rss
     print(f"Starting Memory Usage: {rss_memory / (1024**2):.2f} MB")
 
+def init():
+    #Global Variable Definitions
+    global clock, objects
+    global screen, width, height
+    global ButtonXScale, ButtonYScale, ButtonFontSize, bordWidth
+    global flagArr, convArr, constArr, numSorted
+    global BG_COLOR, BORDER_COLOR, TEXT_FIELD_COLOR, WHITE, BLACK, RED, NORMAL_COLOR, HOVER_COLOR, PRESS_COLOR
+
+    # Initialize Pygame
+    pygame.init()
+
+    #Screen Vars
+    clock = pygame.time.Clock()
+    objects = []
+
+    #Window Setup
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    pygame.display.set_caption("Bread HMI")
+    width, height = pygame.display.get_surface().get_size()
+
+    if(memDebug):
+        rss_memory = process.memory_info().rss
+        print(f"Window created!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+    #Button Scale & Placement Grid Vars
+    ButtonXScale = (int) ((width/4))
+    ButtonYScale = (int) ((height/5))
+    ButtonFontSize = (int) (ButtonYScale*0.4)
+
+    bordWidth = height/50
+
+    #Arrays of bytes
+    flagArr = array.array("b", [0, 1, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
+    convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
+    constArr = array.array("b", [60]) #FPS
+
+    #Conveyor Vars
+    numSorted = 0
+
+    #Colors
+    BG_COLOR = (245, 245, 220)
+    BORDER_COLOR = (98, 49, 8)
+    TEXT_FIELD_COLOR= (210, 180, 140)
+    WHITE = (255, 255, 255)
+    BLACK = (0,0,0)
+    RED = (255,0,0)
+    NORMAL_COLOR = (117, 35, 0)
+    HOVER_COLOR = (30, 100, 200)
+    PRESS_COLOR = (0, 50, 75)
+
+    if(memDebug):
+        rss_memory = process.memory_info().rss
+        print(f"Constants Created!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+def camInit():
+    #Global var definitions
+    global cam
+
+    #Camera setup
+    cam = cv2.VideoCapture(0)
+    if not cam.isOpened():
+        print("Error: Webcam could not be opened.")
+        sys.exit()
+
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+    if(memDebug):
+        rss_memory = process.memory_info().rss
+        print(f"Camera started!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+def graphicInit():
+    #Global var init
+    global boxY, boxWidth, boxHeight, ssBoxX, msBoxX, osBoxX
+    global font
+    global setSpeedLabel, mesSpeedLabel, objText
+    global ssLabelX, ssLabelY, msLabelX, msLabelY, osLabelX, osLabelY
+    global leftDirButton, minusSpeedButton, addSpeedButton, rightDirButton
+    global osheLogo, owidth, oheight, bootAnim, bootAnimTimings, bootAnimLength
+
+    #Image asset setup
+    pygame.display.set_icon(pygame.image.load('assets/icon.png'))
+    osheLogo = pygame.image.load("assets/OSHE Logo.png").convert_alpha()
+    osheLogo = pygame.transform.scale(osheLogo, (osheLogo.width/10, osheLogo.height/10))
+    owidth = osheLogo.width; oheight = osheLogo.height
+
+    #Boot animation setup
+    bootAnim = gif_pygame.load("assets/boot_test_delete_later.gif")
+    bootAnimTimings = bootAnim.get_durations()
+    bootAnimLength = 0;
+
+    #Calculate boot animation total length.
+    for i in bootAnimTimings:
+        bootAnimLength = bootAnimLength + i
+
+    if(memDebug):
+        rss_memory = process.memory_info().rss
+        print(f"Assets loaded! Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+    #Static graphic setup
+    boxY = bordWidth*5; boxWidth = width/12; boxHeight = height/16;
+    ssBoxX = bordWidth*7; msBoxX = width/2 - width/24; osBoxX = width - bordWidth*14
+
+    #Static text setup
+    font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
+    setSpeedLabel = font.render("Set Speed", True, BORDER_COLOR) #Set speed label text
+
+    ssLabelX = (int) (ssBoxX + boxWidth/2 - setSpeedLabel.width/2) #Set speed label X precalc
+    ssLabelY = (int) (boxY - setSpeedLabel.height - setSpeedLabel.height/6) #Set speed label Y precalc
+
+    mesSpeedLabel = font.render("Measured Speed", True, BORDER_COLOR) #Measured speed label text
+    msLabelX = (int) (width/2 - mesSpeedLabel.width/2)
+    msLabelY = ssLabelY
+
+    objText = font.render("Objects Sorted", True, BORDER_COLOR) #Sorted object count label text
+    osLabelX = osBoxX + boxWidth/2 - objText.width/2
+    osLabelY = ssLabelY
+
+    #Belt Controls
+    leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+    #Misc Setup
+    pygame.mixer.pre_init(44100, -16, 1, 1024)
+
+    if(memDebug):
+        rss_memory = process.memory_info().rss
+        print(f"Static elements loaded!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
 
 
-# Initialize Pygame
-pygame.init()
+if multiThread:
+    init()
+    camThread = threading.Thread(target = camInit)
+    graphicThread = threading.Thread(target = graphicInit)
 
-#Screen Vars
-clock = pygame.time.Clock()
-objects = []
+    camThread.start()
+    graphicThread.start()
+    CAN.sanity()
 
-#Arrays of bytes
-flagArr = array.array("b", [0, 1, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
-convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
-constArray = array.array("b", [60]) #FPS, bDiv,
+    threadLiving[0] = camThread.is_alive()
+    threadLiving[1] = graphicThread.is_alive()
 
-#Conveyor Vars
-numSorted = 0
+    while True:
+        if not threadLiving[0]:
+            camThread.join()
+            graphicThread.join()
+            break
 
-#Window Setup
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-pygame.display.set_caption("Bread HMI")
-width, height = pygame.display.get_surface().get_size()
+        if not threadLiving[1]:
+            graphicThread.join()
+            camThread.join()
+            break
 
-if(memDebug):
-    rss_memory = process.memory_info().rss
-    print(f"Window created!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+        threadLiving[0] = camThread.is_alive()
+        threadLiving[1] = graphicThread.is_alive()
 
-#Image asset setup
-pygame.display.set_icon(pygame.image.load('assets/icon.png'))
-osheLogo = pygame.image.load("assets/OSHE Logo.png").convert_alpha()
-osheLogo = pygame.transform.scale(osheLogo, (osheLogo.width/10, osheLogo.height/10))
-owidth = osheLogo.width; oheight = osheLogo.height
-
-#Boot animation setup
-bootAnim = gif_pygame.load("assets/boot_test_delete_later.gif")
-bootAnimTimings = bootAnim.get_durations()
-bootAnimLength = 0;
-
-#Calculate boot animation total length.
-for i in bootAnimTimings:
-    bootAnimLength = bootAnimLength + i
-
-if(memDebug):
-    rss_memory = process.memory_info().rss
-    print(f"Assets loaded! Memory Usage: {rss_memory / (1024**2):.2f} MB")
-
-#Button Scale & Placement Grid Vars
-ButtonXScale = (int) ((width/4))
-ButtonYScale = (int) ((height/5))
-ButtonFontSize = (int) (ButtonYScale*0.4)
-
-bordWidth = height/50
-
-#Colors
-BG_COLOR = (245, 245, 220)
-BORDER_COLOR = (98, 49, 8)
-TEXT_FIELD_COLOR= (210, 180, 140)
-WHITE = (255, 255, 255)
-BLACK = (0,0,0)
-RED = (255,0,0)
-NORMAL_COLOR = (117, 35, 0)
-HOVER_COLOR = (30, 100, 200)
-PRESS_COLOR = (0, 50, 75)
-
-#Camera setup
-cam = cv2.VideoCapture(0)
-if not cam.isOpened():
-    print("Error: Webcam could not be opened.")
-    sys.exit()
-
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-if(memDebug):
-    rss_memory = process.memory_info().rss
-    print(f"Camera started!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
-
-#Static graphic setup
-boxY = bordWidth*5; boxWidth = width/12; boxHeight = height/16;
-ssBoxX = bordWidth*7; msBoxX = width/2 - width/24; osBoxX = width - bordWidth*14
-
-#Static text setup
-font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
-setSpeedLabel = font.render("Set Speed", True, BORDER_COLOR) #Set speed label text
-
-ssLabelX = (int) (ssBoxX + boxWidth/2 - setSpeedLabel.width/2) #Set speed label X precalc
-ssLabelY = (int) (boxY - setSpeedLabel.height - setSpeedLabel.height/6) #Set speed label Y precalc
-
-mesSpeedLabel = font.render("Measured Speed", True, BORDER_COLOR) #Measured speed label text
-msLabelX = (int) (width/2 - mesSpeedLabel.width/2)
-msLabelY = ssLabelY
-
-objText = font.render("Objects Sorted", True, BORDER_COLOR) #Sorted object count label text
-osLabelX = osBoxX + boxWidth/2 - objText.width/2
-osLabelY = ssLabelY
-
-#Belt Controls
-leftDirButton = screenElements.Button("Left", (int) (0  + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-minusSpeedButton = screenElements.Button("-", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-
-if(memDebug):
-    rss_memory = process.memory_info().rss
-    print(f"Static elements loaded!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
-
-
-#Misc Setup
-pygame.mixer.pre_init(44100, -16, 1, 1024)
-
-CAN.sanity()
+if not multiThread:
+    init()
+    camInit()
+    graphicInit()
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
     global flagArr
@@ -190,7 +250,7 @@ def HomeScreen(): #Screen for elements of the home screen
 
     #Update frame buffer
     pygame.display.update()
-    clock.tick(constArray[0])
+    clock.tick(constArr[0])
     
 def CamScreen(): #Screen for elements of the camera view screen
     global cam
@@ -226,7 +286,7 @@ def CamScreen(): #Screen for elements of the camera view screen
 
     #Update frame buffer
     pygame.display.update()
-    clock.tick(constArray[0])
+    clock.tick(constArr[0])
 
 def ConveyorScreen(): #Screen for elements of the conveyor control screen
     global convArr
@@ -315,7 +375,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
     #Update frame buffer
     pygame.display.update()
-    clock.tick(constArray[0])
+    clock.tick(constArr[0])
 
 def FaultScreen(): #Screen for elements of the fault screen
     screen.fill(RED)
@@ -339,7 +399,7 @@ def FaultScreen(): #Screen for elements of the fault screen
             
     #Update frame buffer        
     pygame.display.update()
-    clock.tick(constArray[0])
+    clock.tick(constArr[0])
 
 def InfoScreen():
     global flagArr
@@ -377,7 +437,7 @@ def InfoScreen():
 
     #Update frame buffer
     pygame.display.update()
-    clock.tick(constArray[0])
+    clock.tick(constArr[0])
     
 def evil_noise():
     sample_rate = 44100
@@ -420,8 +480,10 @@ def drawBorders():
 
 #End of init, start rendering
 initTime = time.perf_counter()
+if timeDebug:
+    print(f"Loading time = {round((initTime - start)*1000, 2)}ms")
 
-#Main Game Loop
+#Main Loop
 while True:
     while(flagArr[0]): #Render boot animation
         #screen.fill(BLACK)
@@ -435,7 +497,7 @@ while True:
             
         #Update frame buffer        
         pygame.display.update()
-        clock.tick(constArray[0])
+        clock.tick(constArr[0])
         
     if(memDebugLoop):
         rss_memory = process.memory_info().rss

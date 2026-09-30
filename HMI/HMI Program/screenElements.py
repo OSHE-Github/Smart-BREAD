@@ -39,4 +39,3 @@ class Button:
             self.current_color = self.hoverColor
         else:
             self.current_color = self.normColor
-            print()
