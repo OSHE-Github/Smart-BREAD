@@ -39,3 +39,29 @@ class Button:
             self.current_color = self.hoverColor
         else:
             self.current_color = self.normColor
+
+def drawBorders(screen, BORDER_COLOR, width, height, bordWidth):
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, width, bordWidth), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, height - bordWidth, width, bordWidth), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, bordWidth, height), border_radius=0)
+    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(width - bordWidth, 0, bordWidth, height), border_radius=0)
+
+def evil_noise():
+    pygame.mixer.pre_init(44100, -16, 1, 1024)
+    sample_rate = 44100
+    period = int(sample_rate / 440)
+
+    #Build one full wavelength cycle (half high amplitude, half low)
+    amplitude = 2**15 - 1  # Max for 16-bit signed int
+    samples = array.array("h", [0] * period)
+    for i in range(period):
+        samples[i] = amplitude if i < period / 2 else -amplitude
+
+    #Turn the cycle into a Sound object
+    sound = pygame.mixer.Sound(buffer=samples)
+    sound.set_volume(0.125)
+
+    #Loop the short buffer sound to fill the requested duration
+    sound.play(loops=-1)
+    pygame.delay(1000)
+    sound.stop()

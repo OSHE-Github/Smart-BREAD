@@ -3,6 +3,8 @@ from tkinter import font
 import pygame, gif_pygame
 import os, psutil
 import screenElements, CAN
+from screenElements import drawBorders, evil_noise
+from converters import cv2topygame
 
 #Process time monitor
 timeDebug = 1
@@ -11,8 +13,8 @@ if timeDebug:
     start = time.perf_counter()
 
 #Enable threading
-multiThread = 0;
-threadLiving = array.array("b", [0,0])
+multiThread = 1;
+threadLiving = array.array("b", [0,0,0,0])
 
 #Init memory monitor
 memDebug = 1;
@@ -148,13 +150,9 @@ def graphicInit():
     addSpeedButton = screenElements.Button("+", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     rightDirButton = screenElements.Button("Right", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-    #Misc Setup
-    pygame.mixer.pre_init(44100, -16, 1, 1024)
-
     if(memDebug):
         rss_memory = process.memory_info().rss
         print(f"Static elements loaded!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
-
 
 if multiThread:
     init()
@@ -191,7 +189,7 @@ def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN 
     global flagArr
 
     screen.fill(BG_COLOR)
-    drawBorders()
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
 
     font = pygame.font.SysFont('Arial', 30)
     bread = font.render("Smart BREAD", True, BLACK)
@@ -215,7 +213,7 @@ def HomeScreen(): #Screen for elements of the home screen
 
     font = pygame.font.SysFont('Arial', 30)
     screen.fill(BG_COLOR)
-    drawBorders()
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
     cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     conveyorButton = screenElements.Button("Conveyor", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     infoButton = screenElements.Button("Info", (int) (width/2 - ButtonXScale/2), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
@@ -257,7 +255,7 @@ def CamScreen(): #Screen for elements of the camera view screen
     global flagArr
 
     screen.fill(BG_COLOR)
-    drawBorders()
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
 
     #Read and convert camera feed
     ret, frame = cam.read()
@@ -294,7 +292,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
     #Draw background elements
     screen.fill(BG_COLOR)
-    drawBorders()
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
 
     #Define text to display
     font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
@@ -402,7 +400,7 @@ def InfoScreen():
     global flagArr
 
     screen.fill(BG_COLOR)
-    drawBorders()
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
 
     font = pygame.font.SysFont('Arial', 60)
     text = font.render(" Smart-BREAD " \
@@ -436,45 +434,6 @@ def InfoScreen():
     #Update frame buffer
     pygame.display.update()
     clock.tick(constArr[0])
-    
-def evil_noise():
-    sample_rate = 44100
-    period = int(sample_rate / 440)
-
-    #Build one full wavelength cycle (half high amplitude, half low)
-    amplitude = 2**15 - 1  # Max for 16-bit signed int
-    samples = array.array("h", [0] * period)
-    for i in range(period):
-        samples[i] = amplitude if i < period / 2 else -amplitude
-
-    #Turn the cycle into a Sound object
-    sound = pygame.mixer.Sound(buffer=samples)
-    sound.set_volume(0.125)
-
-    #Loop the short buffer sound to fill the requested duration
-    sound.play(loops=-1)
-    pygame.delay(1000)
-    sound.stop()
-
-def cv2topygame(opencv_image):
-    #Check if the image is even valid before trying
-    if opencv_image is None or not hasattr(opencv_image, 'shape') or opencv_image.size == 0:
-        return None
-
-    #Convert image from cv2 to pygame for display
-    try:
-        rgb_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB)
-        pygame_image = rgb_image.swapaxes(0, 1)
-        return pygame.surfarray.make_surface(pygame_image)
-    except Exception as e:
-        print(f"Error converting frame: {e}")
-        return None
-
-def drawBorders():
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, width, bordWidth), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, height - bordWidth, width, bordWidth), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(0, 0, bordWidth, height), border_radius=0)
-    pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(width - bordWidth, 0, bordWidth, height), border_radius=0)
 
 #End of init, start rendering
 initTime = time.perf_counter()
