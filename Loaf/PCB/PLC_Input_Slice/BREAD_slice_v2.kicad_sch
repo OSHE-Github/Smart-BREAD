@@ -16739,7 +16739,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_DIP:DIP-16_W7.62mm_LongPads"
+		(property "Footprint" "DIP-16_W7.62mm"
 			(at 261.62 71.12 0)
 			(hide yes)
 			(show_name no)

@@ -1329,6 +1329,212 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector:Screw_Terminal_01x02"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Screw_Terminal_01x02"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "screw terminal"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "TerminalBlock*:*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Screw_Terminal_01x02_1_1"
+				(rectangle
+					(start -1.27 1.27)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.5334 0.3302) (xy 0.3302 -0.508)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.5334 -2.2098) (xy 0.3302 -3.048)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.3556 0.508) (xy 0.508 -0.3302)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.3556 -2.032) (xy 0.508 -2.8702)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 0)
+					(radius 0.635)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 -2.54)
+					(radius 0.635)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Screw_Terminal_01x16"
 			(pin_names
 				(offset 1.016)
@@ -3248,7 +3454,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Switch:SW_Push_Open"
+		(symbol "Switch:SW_Push"
 			(pin_numbers
 				(hide yes)
 			)
@@ -3262,17 +3468,18 @@
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
 			(property "Reference" "SW"
-				(at 0 2.54 0)
+				(at 1.27 2.54 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
-			(property "Value" "SW_Push_Open"
-				(at 0 -1.905 0)
+			(property "Value" "SW_Push"
+				(at 0 -1.524 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -3303,7 +3510,7 @@
 					)
 				)
 			)
-			(property "Description" "Push button switch, push-to-open, generic, two pins"
+			(property "Description" "Push button switch, generic, two pins"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -3314,7 +3521,7 @@
 					)
 				)
 			)
-			(property "ki_keywords" "switch normally-closed pushbutton push-button"
+			(property "ki_keywords" "switch normally-open pushbutton push-button"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -3325,19 +3532,7 @@
 					)
 				)
 			)
-			(symbol "SW_Push_Open_0_1"
-				(polyline
-					(pts
-						(xy -2.54 -0.635) (xy 2.54 -0.635)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
+			(symbol "SW_Push_0_1"
 				(circle
 					(center -2.032 0)
 					(radius 0.508)
@@ -3351,7 +3546,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 -0.635) (xy 0 1.27)
+						(xy 0 1.27) (xy 0 3.048)
 					)
 					(stroke
 						(width 0)
@@ -3372,10 +3567,22 @@
 						(type none)
 					)
 				)
+				(polyline
+					(pts
+						(xy 2.54 1.27) (xy -2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
 				(pin passive line
 					(at -5.08 0 0)
 					(length 2.54)
-					(name "A"
+					(name "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3390,12 +3597,10 @@
 						)
 					)
 				)
-			)
-			(symbol "SW_Push_Open_1_1"
 				(pin passive line
 					(at 5.08 0 180)
 					(length 2.54)
-					(name "B"
+					(name "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3886,12 +4091,6 @@
 		(uuid "2fbc997a-4729-469e-8c71-bfa1c302416a")
 	)
 	(junction
-		(at 124.46 71.12)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "329a7bd9-d313-4308-b334-fbbc34408341")
-	)
-	(junction
 		(at 90.17 34.29)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4072,12 +4271,6 @@
 		(uuid "b42c6fbc-49f8-49d2-8c68-de8392dd979e")
 	)
 	(junction
-		(at 111.76 71.12)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c1f26445-12f2-4241-888b-bb7b2feaa40f")
-	)
-	(junction
 		(at 139.7 54.61)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4246,16 +4439,6 @@
 			(type default)
 		)
 		(uuid "0c1fa6b9-13bc-4ff6-a4d0-d7f799c613b4")
-	)
-	(wire
-		(pts
-			(xy 111.76 71.12) (xy 111.76 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0d048ca5-d8b9-48e3-954f-41c5fdf60ab6")
 	)
 	(wire
 		(pts
@@ -4429,16 +4612,6 @@
 	)
 	(wire
 		(pts
-			(xy 119.38 71.12) (xy 124.46 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "217aa60e-c928-426f-8833-91e04c6e81a7")
-	)
-	(wire
-		(pts
 			(xy 76.2 107.95) (xy 76.2 111.76)
 		)
 		(stroke
@@ -4526,16 +4699,6 @@
 			(type default)
 		)
 		(uuid "2d64f0ca-d5e6-4d3b-a4c3-e78faaf4184d")
-	)
-	(wire
-		(pts
-			(xy 107.95 71.12) (xy 111.76 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2f6b9f1e-d663-4144-8e89-f2ed93d510ef")
 	)
 	(wire
 		(pts
@@ -4779,16 +4942,6 @@
 	)
 	(wire
 		(pts
-			(xy 114.3 102.87) (xy 118.11 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "53347d73-7779-45c0-86a8-0220e0765cad")
-	)
-	(wire
-		(pts
 			(xy 62.23 31.75) (xy 67.31 31.75)
 		)
 		(stroke
@@ -4999,6 +5152,16 @@
 	)
 	(wire
 		(pts
+			(xy 116.84 104.14) (xy 116.84 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "676a3230-d588-4249-8dc7-1af44701e7fa")
+	)
+	(wire
+		(pts
 			(xy 110.49 81.28) (xy 110.49 87.63)
 		)
 		(stroke
@@ -5069,7 +5232,7 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 81.28) (xy 124.46 71.12)
+			(xy 124.46 66.04) (xy 124.46 81.28)
 		)
 		(stroke
 			(width 0)
@@ -5099,7 +5262,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 71.12) (xy 90.17 71.12)
+			(xy 90.17 71.12) (xy 101.6 71.12)
 		)
 		(stroke
 			(width 0)
@@ -5226,6 +5389,16 @@
 			(type default)
 		)
 		(uuid "832ce19c-e754-4bb8-a057-2e2a122682de")
+	)
+	(wire
+		(pts
+			(xy 101.6 71.12) (xy 101.6 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8386efcf-a88b-4ecc-a401-15f91c3d65c7")
 	)
 	(wire
 		(pts
@@ -5559,16 +5732,6 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 71.12) (xy 124.46 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b7272e6b-f4b7-4cbd-b480-e31ef92317e3")
-	)
-	(wire
-		(pts
 			(xy 137.16 24.13) (xy 139.7 24.13)
 		)
 		(stroke
@@ -5596,6 +5759,16 @@
 			(type default)
 		)
 		(uuid "bb283830-7c28-4d77-b4d4-11f7dc0da260")
+	)
+	(wire
+		(pts
+			(xy 104.14 69.85) (xy 104.14 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bb59758e-b50a-4f2f-9835-62565aa59129")
 	)
 	(wire
 		(pts
@@ -5899,6 +6072,16 @@
 	)
 	(wire
 		(pts
+			(xy 116.84 102.87) (xy 114.3 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dc86a317-c7c8-42b6-b036-476e9c0c0af8")
+	)
+	(wire
+		(pts
 			(xy 31.75 45.72) (xy 36.83 45.72)
 		)
 		(stroke
@@ -5996,6 +6179,16 @@
 			(type default)
 		)
 		(uuid "ee8f0a55-5d5e-4bea-9104-fd85c6f03c6e")
+	)
+	(wire
+		(pts
+			(xy 104.14 71.12) (xy 110.49 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ef5466b0-624d-4f0b-b360-419169316fab")
 	)
 	(wire
 		(pts
@@ -6116,6 +6309,16 @@
 			(justify right bottom)
 		)
 		(uuid "068e1237-0fe3-4d4a-b409-1668f70fd33a")
+	)
+	(label "ESTOP"
+		(at 110.49 71.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "0b839255-5661-432b-bc22-e96293d81ea8")
 	)
 	(label "RESET"
 		(at 110.49 87.63 90)
@@ -6276,16 +6479,6 @@
 			(justify right bottom)
 		)
 		(uuid "592bd2c6-0884-45fa-8994-d26252f64be1")
-	)
-	(label "ESTOP"
-		(at 111.76 64.77 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "5b794e33-3ce9-4129-9257-a49ba7303129")
 	)
 	(label "DIO3"
 		(at 36.83 71.12 180)
@@ -6499,7 +6692,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0072667f-68ef-439d-8795-55bdb1b916ef")
-		(property "Reference" "J5"
+		(property "Reference" "J6"
 			(at 132.08 15.24 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6603,7 +6796,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J5")
+					(reference "J6")
 					(unit 1)
 				)
 			)
@@ -6846,85 +7039,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+12V")
-		(at 118.11 102.87 270)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "183dbd13-ceb1-4608-b6f2-4c1bf67817fb")
-		(property "Reference" "#PWR019"
-			(at 114.3 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+12V"
-			(at 121.92 102.8699 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 118.11 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 118.11 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+12V\""
-			(at 118.11 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3d26ac0d-03b2-43d3-8cff-2972e70302a1")
-		)
-		(instances
-			(project "IO_Daughter_Board"
-				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "#PWR019")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+5V")
 		(at 59.69 91.44 90)
 		(mirror x)
@@ -7094,7 +7208,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2c1659e7-1136-429b-b107-3a830aa101f3")
-		(property "Reference" "J2"
+		(property "Reference" "J4"
 			(at 82.55 15.24 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7198,87 +7312,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Switch:SW_Push_Open")
-		(at 102.87 81.28 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "2fef9f06-d1fe-4b90-b0b5-d93c94f3171b")
-		(property "Reference" "SW2"
-			(at 102.87 74.93 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "SW_Push_Open"
-			(at 102.87 77.47 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_1P1T_6x3.5mm_H5.0_APEM_MJTP1250"
-			(at 102.87 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 102.87 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Push button switch, push-to-open, generic, two pins"
-			(at 102.87 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "3373fd2f-b6e0-4666-afb8-3eaf2387f741")
-		)
-		(pin "1"
-			(uuid "353188fa-a533-43d7-bbd3-5d2595e249d4")
-		)
-		(instances
-			(project "IO_Daughter_Board"
-				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "SW2")
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -7453,7 +7487,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4448c10c-8714-4e68-96d0-de534529c7f0")
-		(property "Reference" "J4"
+		(property "Reference" "J5"
 			(at 106.68 15.24 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7557,7 +7591,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J4")
+					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -7638,6 +7672,163 @@
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
 					(reference "#PWR060")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 116.84 104.14 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "70bde130-a17b-4eb5-ad5c-0e2cad642179")
+		(property "Reference" "#PWR053"
+			(at 116.84 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 116.84 109.22 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 116.84 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 116.84 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 116.84 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "3ea15437-1bbc-45e3-a269-720908d45e20")
+		)
+		(instances
+			(project "IO_Daughter_Board"
+				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
+					(reference "#PWR053")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 102.87 81.28 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "7e5ffefc-bc4c-418b-ab01-4f778d863d74")
+		(property "Reference" "SW1"
+			(at 102.87 83.312 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SW_Push"
+			(at 102.87 76.962 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "SW_Tactile_Straight_KSL0Axx1LFTR"
+			(at 102.87 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 102.87 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Push button switch, generic, two pins"
+			(at 102.87 81.28 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "c1a0f27d-34c4-41ed-a019-0c40ea8e7818")
+		)
+		(pin "1"
+			(uuid "5937f495-3865-452d-a254-403322bdd30a")
+		)
+		(instances
+			(project "IO_Daughter_Board"
+				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
+					(reference "SW1")
 					(unit 1)
 				)
 			)
@@ -7803,6 +7994,85 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+12V")
+		(at 118.11 97.79 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a50c953b-9ac7-4722-9fd8-12b7b1468610")
+		(property "Reference" "#PWR019"
+			(at 114.3 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+12V"
+			(at 121.92 97.7899 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 118.11 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 118.11 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+12V\""
+			(at 118.11 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d2c03710-e0dc-482d-b505-539b05b57af3")
+		)
+		(instances
+			(project "IO_Daughter_Board"
+				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
+					(reference "#PWR019")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 39.37 41.91 180)
 		(unit 1)
@@ -7892,7 +8162,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c00031d8-a0b7-4c94-849a-76c9417646e4")
-		(property "Reference" "J3"
+		(property "Reference" "J1"
 			(at 26.67 87.122 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8023,7 +8293,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J3")
+					(reference "J1")
 					(unit 1)
 				)
 			)
@@ -8154,8 +8424,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Switch:SW_Push_Open")
-		(at 102.87 71.12 0)
+		(lib_id "Connector:Screw_Terminal_01x02")
+		(at 101.6 64.77 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8163,30 +8433,31 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c7b01717-0fea-4299-9d80-b8a9abb78e6e")
-		(property "Reference" "SW1"
-			(at 102.87 64.77 0)
+		(uuid "d1c82277-bdad-4474-be0b-3e1bf92be358")
+		(property "Reference" "J7"
+			(at 106.68 63.4999 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
-		(property "Value" "SW_Push_Open"
-			(at 102.87 67.31 0)
+		(property "Value" "Screw_Terminal_01x02"
+			(at 92.964 72.39 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_1P1T_6x3.5mm_H5.0_APEM_MJTP1250"
-			(at 102.87 66.04 0)
+		(property "Footprint" "AMASS_XT30UPB-M_1x02_P5.0mm_Vertical"
+			(at 101.6 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8197,7 +8468,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 102.87 66.04 0)
+			(at 101.6 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8207,8 +8478,8 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, push-to-open, generic, two pins"
-			(at 102.87 71.12 0)
+		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 101.6 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8219,94 +8490,15 @@
 			)
 		)
 		(pin "2"
-			(uuid "f5c81e6b-3f8f-42f7-91c2-9c10c9489ff9")
+			(uuid "ead2dc4f-2096-49a0-a98e-1fe737b0a2c2")
 		)
 		(pin "1"
-			(uuid "c90cef2d-ee9d-4f9d-9e54-89837a4542af")
+			(uuid "5f0b6f19-16f6-4634-acb4-aec6b3dc3ce9")
 		)
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "SW1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 118.11 97.79 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d5de9991-e7d4-47e8-9c44-3e1772d7afc0")
-		(property "Reference" "#PWR053"
-			(at 124.46 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 121.92 97.7899 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 118.11 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 118.11 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 118.11 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5533adc3-cf76-4837-b17e-08b6eb6fcb98")
-		)
-		(instances
-			(project "IO_Daughter_Board"
-				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "#PWR053")
+					(reference "J7")
 					(unit 1)
 				)
 			)
@@ -8404,7 +8596,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "da8dbd36-e2be-49bb-bcef-f276181d6c69")
-		(property "Reference" "J6"
+		(property "Reference" "J2"
 			(at 106.68 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8466,7 +8658,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J6")
+					(reference "J2")
 					(unit 1)
 				)
 			)
@@ -8812,8 +9004,8 @@
 				)
 			)
 		)
-		(property "Value" "+5V"
-			(at 43.688 49.276 0)
+		(property "Value" "+5V Slice"
+			(at 43.942 48.006 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8948,85 +9140,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 115.57 71.12 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f1c90389-3d77-40d7-9ea1-490466ac4c61")
-		(property "Reference" "R2"
-			(at 120.396 67.564 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10K"
-			(at 120.396 70.104 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal"
-			(at 115.57 72.898 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 115.57 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 115.57 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "6e6550b8-4f33-4025-ba06-8986323c7a89")
-		)
-		(pin "1"
-			(uuid "8a72a0f1-eba6-4bfb-9f0d-a4a8ef5be489")
-		)
-		(instances
-			(project "IO_Daughter_Board"
-				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:Screw_Terminal_01x16")
 		(at 57.15 41.91 180)
 		(unit 1)
@@ -9038,7 +9151,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f8e2de82-79ce-4a6a-babb-54fd8e792250")
-		(property "Reference" "J1"
+		(property "Reference" "J3"
 			(at 57.15 15.24 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9142,7 +9255,7 @@
 		(instances
 			(project "IO_Daughter_Board"
 				(path "/4872e982-f9e2-4112-b5b3-63220ec2ee13"
-					(reference "J1")
+					(reference "J3")
 					(unit 1)
 				)
 			)
