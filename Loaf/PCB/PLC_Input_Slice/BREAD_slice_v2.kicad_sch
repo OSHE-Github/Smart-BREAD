@@ -11860,7 +11860,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 135.89 61.976 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12284,7 +12284,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 265.43 127.254 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13536,7 +13536,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 207.01 61.976 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -14087,7 +14087,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 171.45 61.976 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15407,7 +15407,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 267.97 54.864 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15954,7 +15954,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 246.38 47.244 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16739,7 +16739,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "DIP-16_W7.62mm"
+		(property "Footprint" "Package_DIP:DIP-16_W7.62mm_LongPads"
 			(at 261.62 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -17603,7 +17603,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 184.15 116.586 90)
 			(show_name no)
 			(do_not_autoplace no)

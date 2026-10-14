@@ -4298,6 +4298,16 @@
 	)
 	(wire
 		(pts
+			(xy 118.11 38.1) (xy 119.38 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40f08d92-ad59-47af-8600-ac0f7311e43e")
+	)
+	(wire
+		(pts
 			(xy 182.88 130.81) (xy 184.15 130.81)
 		)
 		(stroke
@@ -5702,6 +5712,30 @@
 			)
 		)
 	)
+	(global_label "VBus"
+		(shape input)
+		(at 110.49 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e315d7d9-4f88-43f2-ae30-ccb27b3b729e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 102.9691 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
 	(global_label "CS"
 		(shape input)
 		(at 144.78 55.88 0)
@@ -6067,7 +6101,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 193.04 125.984 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6135,9 +6169,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "0ab70f22-1eca-4f93-b1e8-25d56974b8e3")
+		(uuid "0d99ee4e-0e4b-4b38-abcf-b64d66d574e2")
 		(property "Reference" "C2"
-			(at 140.462 28.448 90)
+			(at 140.208 28.956 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6147,9 +6181,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22pF"
-			(at 137.16 22.352 0)
-			(hide yes)
+		(property "Value" "0.22-0.47uF"
+			(at 132.334 34.036 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6192,10 +6225,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "1142c784-459a-4176-aec0-8885c9bc3a7c")
+			(uuid "c295a0e1-2526-4723-a616-ec045f1ffb98")
 		)
 		(pin "2"
-			(uuid "8e6b31f8-d13b-401f-9274-067615de7eff")
+			(uuid "975fd536-5104-4e75-b2b3-e27e940f1713")
 		)
 		(instances
 			(project "BREAD_slice_v2"
@@ -7325,7 +7358,7 @@
 				)
 			)
 		)
-		(property "Value" "0.47uF"
+		(property "Value" "0.1uF"
 			(at 111.76 115.316 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8478,6 +8511,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_US")
+		(at 114.3 38.1 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a39eca35-f286-4317-ac68-e8770f5505b3")
+		(property "Reference" "R4"
+			(at 114.3 35.56 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 41.148 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 114.046 39.116 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 114.3 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 114.3 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "55ff79b6-bbfe-471d-be2b-4e80ef057f0a")
+		)
+		(pin "2"
+			(uuid "7471bb89-481b-499a-89ec-024a3ae9a600")
+		)
+		(instances
+			(project "BREAD_slice_v2"
+				(path "/7f913798-a7fb-4519-b930-d05e163d3032"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 111.76 92.71 0)
 		(unit 1)
@@ -9281,7 +9393,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.2 - 0.47 uF"
+		(property "Value" "2uF"
 			(at 139.446 25.908 90)
 			(show_name no)
 			(do_not_autoplace no)
