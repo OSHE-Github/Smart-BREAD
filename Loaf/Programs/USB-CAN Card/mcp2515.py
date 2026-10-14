@@ -18,6 +18,11 @@ from dataclasses import dataclass, field
 
 import hid
 from mcp2210 import Mcp2210, Mcp2210GpioDesignation, Mcp2210GpioDirection
+"""
+For Windows:
+pip install hidapi
+pip install mcp2210-python
+"""
 
 # SPI instructions
 _RESET = 0xC0
