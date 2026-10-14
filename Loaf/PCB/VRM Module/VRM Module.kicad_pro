@@ -172,7 +172,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -184,7 +183,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -196,7 +194,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -491,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "I_O_Slice.kicad_pro",
+    "filename": "VRM Module.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -519,8 +516,8 @@
     "meta": {
       "version": 5
     },
-    "net_colors": {},
-    "netclass_assignments": {},
+    "net_colors": null,
+    "netclass_assignments": null,
     "netclass_patterns": []
   },
   "pcbnew": {
@@ -659,17 +656,17 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "I_O_Slice.kicad_sch",
+        "filename": "VRM Module.kicad_sch",
         "name": "Root",
-        "uuid": "3542a06c-7f78-4482-a8a2-794801f96d64"
+        "uuid": "11b59579-0fd3-4760-a9b9-186c2ba4f5bc"
       }
     ],
-    "used_designators": "J1-17,#PWR1-23,U1-5,A1,C1",
+    "used_designators": "L1,R1-4,C1-6,U1,VRM1,#PWR18,#PWR27-32,#PWR49-66",
     "variants": []
   },
   "sheets": [
     [
-      "3542a06c-7f78-4482-a8a2-794801f96d64",
+      "11b59579-0fd3-4760-a9b9-186c2ba4f5bc",
       "Root"
     ]
   ],

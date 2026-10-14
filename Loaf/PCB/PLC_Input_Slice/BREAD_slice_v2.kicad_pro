@@ -561,7 +561,7 @@
       "plot": "../Gerbers/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../../../../../../Downloads/BREAD_slice_v2.stl",
       "svg": "",
       "vrml": ""
     },
