@@ -50,9 +50,13 @@ static void printFrame(const twai_message_t &msg) {
 void loop() {
   // Construct the CAN message frame
   twai_message_t tx_msg;
-  tx_msg.identifier = 0x1A3;           // Standard 11-bit CAN ID
-  tx_msg.extd = 0;                     // Standard frame format
-  tx_msg.data_length_code = 8;         // 4 bytes payload
+  twai_message_t rx_msg;
+  //Basic Setup
+  tx_msg.identifier = 0x1A3;
+  tx_msg.extd = 0;
+  tx_msg.data_length_code = 8;
+
+  //Formatted CAN Message
   tx_msg.data[0] = 0b00010000;
   tx_msg.data[1] = 0b00000000;
   tx_msg.data[2] = 0b00000000;
@@ -69,6 +73,27 @@ void loop() {
     Serial.println("Failed to transmit message. Check bus connection/termination.");
   }
 
+  if (twai_receive(&rx_msg, pdMS_TO_TICKS(10)) == ESP_OK) {
+      Serial.print("Received Message | ID: 0x");
+      Serial.print(rx_msg.identifier, HEX);
+      Serial.print(" | Format: ");
+      Serial.print(rx_msg.extd ? "Extended (29-bit)" : "Standard (11-bit)");
+      Serial.print(" | DLC: ");
+      Serial.print(rx_msg.data_length_code);
+      Serial.print(" | Data: ");
+
+      if (!(rx_msg.rtr)) {
+        for (int i = 0; i < rx_msg.data_length_code; i++) {
+          Serial.print("0x");
+          if (rx_msg.data[i] < 0x10) Serial.print("0");
+          Serial.print(rx_msg.data[i], HEX);
+          Serial.print(" ");
+        }
+      } else {
+        Serial.print("[RTR Frame]");
+      }
+      Serial.println();
+    }
   // Delay for exactly 1 second (1000 milliseconds)
   delay(1000); 
 }

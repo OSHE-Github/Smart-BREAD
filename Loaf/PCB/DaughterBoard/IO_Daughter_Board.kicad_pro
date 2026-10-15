@@ -53,7 +53,7 @@
           "border_display_style": 2,
           "border_hatch_pitch": 0.5,
           "corner_radius": 0.0,
-          "corner_smoothing": 0,
+          "corner_smoothing": 1,
           "fill_mode": 0,
           "hatch_gap": 1.5,
           "hatch_orientation": 0.0,
@@ -70,7 +70,28 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "silk_edge_clearance|129502656|76962000|da480c4f-cacf-415a-9f73-799cb5419153|457d1a7b-e71a-472b-acab-be6875cfd4f9",
+          ""
+        ],
+        [
+          "silk_edge_clearance|147751508|126962000|da480c4f-cacf-415a-9f73-799cb5419153|76f802e1-55d3-4cf8-8d0f-dd8d61068201",
+          ""
+        ],
+        [
+          "silk_edge_clearance|172402656|76962000|da480c4f-cacf-415a-9f73-799cb5419153|8369f776-aaba-4565-b1e3-1cf893c614ad",
+          ""
+        ],
+        [
+          "silk_edge_clearance|182000000|116860033|da480c4f-cacf-415a-9f73-799cb5419153|6382d125-7aa7-4cb3-bc5d-5d9458bb4fd9",
+          ""
+        ],
+        [
+          "silk_edge_clearance|82000000|79253410|da480c4f-cacf-415a-9f73-799cb5419153|764c9661-f209-4c3e-bd1f-92fd7258eebb",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -172,7 +193,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -184,7 +204,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -196,7 +215,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -665,7 +683,7 @@
         "uuid": "4872e982-f9e2-4112-b5b3-63220ec2ee13"
       }
     ],
-    "used_designators": "#PWR18-19,#PWR27-29,#PWR49-53,#PWR58-61,C4,J6-7,SW1,VRM1",
+    "used_designators": "H1-7,#PWR18-19,#PWR27-29,#PWR42,#PWR45-46,#PWR49-53,#PWR58-61,C4,J6-8,SW1,VRM1",
     "variants": []
   },
   "sheets": [
