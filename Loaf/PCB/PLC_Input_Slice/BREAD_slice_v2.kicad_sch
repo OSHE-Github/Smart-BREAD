@@ -7626,7 +7626,7 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 151.13) (xy 110.49 151.13)
+			(xy 115.57 151.13) (xy 106.68 151.13)
 		)
 		(stroke
 			(width 0)
@@ -8383,6 +8383,16 @@
 			(type default)
 		)
 		(uuid "57cd11c5-0133-4a7a-9986-5f369d74626b")
+	)
+	(wire
+		(pts
+			(xy 109.22 148.59) (xy 115.57 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "58312a5d-cc0c-438b-8716-59d583a51086")
 	)
 	(wire
 		(pts
@@ -9786,16 +9796,6 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 148.59) (xy 106.68 148.59)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d2beca6b-4fd3-47bd-85c5-28eba13f40ea")
-	)
-	(wire
-		(pts
 			(xy 30.48 58.42) (xy 36.83 58.42)
 		)
 		(stroke
@@ -10604,16 +10604,6 @@
 		)
 		(uuid "51c7778b-1c37-492f-a4a5-8a6baf178025")
 	)
-	(label "CS1"
-		(at 110.49 151.13 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5416736d-6672-409f-a7da-9c9b02277c1c")
-	)
 	(label "MOSI"
 		(at 233.68 26.67 270)
 		(effects
@@ -10884,6 +10874,16 @@
 		)
 		(uuid "7d3bebd4-01d3-4ed4-b847-c9b3e716da69")
 	)
+	(label "ADC1"
+		(at 109.22 148.59 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "80d90206-c2fb-4e4e-89e2-025cd72d5b96")
+	)
 	(label "DAC2"
 		(at 157.48 26.67 270)
 		(effects
@@ -10975,7 +10975,7 @@
 		(uuid "8b27d706-b7d9-4aa2-af6b-7739f889622b")
 	)
 	(label "CAN_CS"
-		(at 106.68 148.59 0)
+		(at 106.68 151.13 0)
 		(effects
 			(font
 				(size 1.27 1.27)
