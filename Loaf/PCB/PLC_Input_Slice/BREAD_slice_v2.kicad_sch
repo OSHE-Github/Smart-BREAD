@@ -7440,6 +7440,16 @@
 	)
 	(wire
 		(pts
+			(xy 31.75 88.9) (xy 36.83 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0717db55-eab5-4764-af3b-5d89a3aa6569")
+	)
+	(wire
+		(pts
 			(xy 166.37 106.68) (xy 161.29 106.68)
 		)
 		(stroke
@@ -7550,7 +7560,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 146.05) (xy 135.89 146.05)
+			(xy 130.81 158.75) (xy 135.89 158.75)
 		)
 		(stroke
 			(width 0)
@@ -7750,7 +7760,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 153.67) (xy 135.89 153.67)
+			(xy 130.81 151.13) (xy 135.89 151.13)
 		)
 		(stroke
 			(width 0)
@@ -8480,7 +8490,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 148.59) (xy 135.89 148.59)
+			(xy 130.81 156.21) (xy 135.89 156.21)
 		)
 		(stroke
 			(width 0)
@@ -8510,7 +8520,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 151.13) (xy 135.89 151.13)
+			(xy 130.81 153.67) (xy 135.89 153.67)
 		)
 		(stroke
 			(width 0)
@@ -8540,7 +8550,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 161.29) (xy 135.89 161.29)
+			(xy 130.81 143.51) (xy 135.89 143.51)
 		)
 		(stroke
 			(width 0)
@@ -9020,7 +9030,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 156.21) (xy 135.89 156.21)
+			(xy 130.81 148.59) (xy 135.89 148.59)
 		)
 		(stroke
 			(width 0)
@@ -9280,7 +9290,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 158.75) (xy 135.89 158.75)
+			(xy 130.81 146.05) (xy 135.89 146.05)
 		)
 		(stroke
 			(width 0)
@@ -10010,7 +10020,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 143.51) (xy 135.89 143.51)
+			(xy 130.81 161.29) (xy 135.89 161.29)
 		)
 		(stroke
 			(width 0)
@@ -10339,7 +10349,7 @@
 		(uuid "1ac115b5-328d-4df2-a74a-caafc7c90a85")
 	)
 	(label "UTX"
-		(at 128.27 189.23 90)
+		(at 130.81 189.23 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10419,7 +10429,7 @@
 		(uuid "29673b42-d1ee-4f8e-9c15-58fa4519732f")
 	)
 	(label "DIO0"
-		(at 151.13 161.29 0)
+		(at 151.13 143.51 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10479,7 +10489,7 @@
 		(uuid "3de50705-9bcd-467e-8fa0-131c9304f272")
 	)
 	(label "DIO1"
-		(at 151.13 158.75 0)
+		(at 151.13 146.05 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10579,7 +10589,7 @@
 		(uuid "55b5debb-a2a0-4f89-a89c-703bf28485ac")
 	)
 	(label "URX"
-		(at 130.81 189.23 90)
+		(at 128.27 189.23 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10679,7 +10689,7 @@
 		(uuid "6324e640-380e-4eeb-82e2-897dcb3ca741")
 	)
 	(label "DIO3"
-		(at 151.13 153.67 0)
+		(at 151.13 151.13 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10719,7 +10729,7 @@
 		(uuid "712f7664-49b3-4cb3-9650-5b344ec526d8")
 	)
 	(label "AIO2"
-		(at 130.81 156.21 0)
+		(at 130.81 148.59 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10909,7 +10919,7 @@
 		(uuid "8930c275-abaf-4dc6-b235-f2987e34f621")
 	)
 	(label "AIO1"
-		(at 130.81 158.75 0)
+		(at 130.81 146.05 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10939,7 +10949,7 @@
 		(uuid "8c432e2e-0c3f-4b4f-89db-fa10d012f1cd")
 	)
 	(label "AIO7"
-		(at 130.81 143.51 0)
+		(at 130.81 161.29 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11029,7 +11039,7 @@
 		(uuid "9914579c-a878-4e67-98cd-db17dcb1772b")
 	)
 	(label "AIO5"
-		(at 130.81 148.59 0)
+		(at 130.81 156.21 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11079,7 +11089,7 @@
 		(uuid "a122f2e2-900e-4ff3-8ae2-ed0d9a782f59")
 	)
 	(label "AIO6"
-		(at 130.81 146.05 0)
+		(at 130.81 158.75 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11179,7 +11189,7 @@
 		(uuid "b6ddc46b-5f36-4d0c-aefe-2dc9b33e8be3")
 	)
 	(label "AIO3"
-		(at 130.81 153.67 0)
+		(at 130.81 151.13 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11219,7 +11229,7 @@
 		(uuid "b917581f-48e2-4a0d-819d-a0a872990784")
 	)
 	(label "DIO7"
-		(at 151.13 143.51 0)
+		(at 151.13 161.29 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11239,7 +11249,7 @@
 		(uuid "ba7c4338-f40b-4873-8a01-1a603b51a2e1")
 	)
 	(label "DIO4"
-		(at 151.13 151.13 0)
+		(at 151.13 153.67 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11249,7 +11259,7 @@
 		(uuid "bdc2f943-147f-4566-b6ad-2cd6b0a08c5a")
 	)
 	(label "AIO4"
-		(at 130.81 151.13 0)
+		(at 130.81 153.67 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11347,6 +11357,16 @@
 			(justify right bottom)
 		)
 		(uuid "d0e063e7-3a91-489a-9e36-3275ea019361")
+	)
+	(label "Sl1Lt"
+		(at 31.75 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d126c756-c77f-460b-bfbc-91970684fdea")
 	)
 	(label "CANRX"
 		(at 236.22 144.78 0)
@@ -11449,7 +11469,7 @@
 		(uuid "dd3bab4a-da70-43f3-a867-75aaa95e1303")
 	)
 	(label "DIO6"
-		(at 151.13 146.05 0)
+		(at 151.13 158.75 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11499,7 +11519,7 @@
 		(uuid "e92c8d49-a7f7-46de-adc6-64e533536cc5")
 	)
 	(label "DIO5"
-		(at 151.13 148.59 0)
+		(at 151.13 156.21 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11539,7 +11559,7 @@
 		(uuid "eff96061-f054-47dc-ad4f-f243aefcfb24")
 	)
 	(label "AIO0"
-		(at 130.81 161.29 0)
+		(at 130.81 143.51 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -11599,7 +11619,7 @@
 		(uuid "f67edd07-f61c-49ad-bb1d-b863260d4164")
 	)
 	(label "DIO2"
-		(at 151.13 156.21 0)
+		(at 151.13 148.59 0)
 		(effects
 			(font
 				(size 1.27 1.27)

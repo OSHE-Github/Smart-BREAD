@@ -78,7 +78,19 @@
       ],
       "drc_exclusions": [
         [
-          "lib_footprint_mismatch|118621500|87757000|4f232c73-f7fd-4890-bc8f-9b59241bcae4|00000000-0000-0000-0000-000000000000",
+          "lib_footprint_mismatch|119129500|87719000|4f232c73-f7fd-4890-bc8f-9b59241bcae4|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "silk_edge_clearance|110388000|55596000|d904a112-e838-44c4-ba5f-e0091c592bcc|23deb62e-7446-4175-8561-6b4519a49765",
+          ""
+        ],
+        [
+          "silk_edge_clearance|110388000|55596000|d904a112-e838-44c4-ba5f-e0091c592bcc|796f95f3-2fac-4145-9528-1d6363c02efb",
+          ""
+        ],
+        [
+          "silk_edge_clearance|120608000|55596000|d904a112-e838-44c4-ba5f-e0091c592bcc|7486391f-abf1-472d-a52b-2f2050a1393d",
           ""
         ],
         [
@@ -90,7 +102,7 @@
           ""
         ],
         [
-          "silk_over_copper|110704297|59762095|4832b552-1eda-461f-9305-4b03c9e068e3|10d2bc06-7f0d-4323-8c90-9a22edac539f",
+          "silk_edge_clearance|201342000|69342000|4f7607be-46ce-4162-b4c0-ebddd3c4f3ef|1aa615d7-3e22-4e70-a7c4-5ec7a9cff533",
           ""
         ]
       ],
@@ -196,6 +208,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -207,6 +220,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -218,6 +232,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -553,8 +568,8 @@
     "meta": {
       "version": 5
     },
-    "net_colors": null,
-    "netclass_assignments": null,
+    "net_colors": {},
+    "netclass_assignments": {},
     "netclass_patterns": []
   },
   "pcbnew": {
@@ -685,7 +700,7 @@
         "uuid": "7f913798-a7fb-4519-b930-d05e163d3032"
       }
     ],
-    "used_designators": "#PWR3-5,#PWR14-18,#PWR20-23,#PWR27-37,#PWR39-59,Y2,A1-2,C1,C3-17,CN1-2,J2,R3-7,R15-17,RN1,RN3,SW1,U1-7",
+    "used_designators": "#PWR3-5,#PWR14-18,#PWR20-23,#PWR27-37,#PWR39-59,A1-2,C1,C3-17,CN1-2,J2,R3-7,R15-17,RN1,RN3,SW1,U1-7,Y2",
     "variants": []
   },
   "sheets": [
