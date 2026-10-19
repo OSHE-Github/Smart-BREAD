@@ -6887,7 +6887,7 @@
 		(uuid "7850a72b-ccc0-4e9c-afae-3e5d3a5d2918")
 	)
 	(label "URX"
-		(at 52.07 74.93 0)
+		(at 52.07 72.39 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6927,7 +6927,7 @@
 		(uuid "9090e019-1cd7-41e8-aacb-b82bd6f696c7")
 	)
 	(label "UTX"
-		(at 36.83 58.42 180)
+		(at 36.83 55.88 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6947,7 +6947,7 @@
 		(uuid "af32f5b0-8134-4aaa-b88b-fa602345549e")
 	)
 	(label "UTX"
-		(at 52.07 72.39 0)
+		(at 52.07 74.93 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6997,7 +6997,7 @@
 		(uuid "c86eb0fd-6789-46f7-bf56-02ce4d015c11")
 	)
 	(label "URX"
-		(at 36.83 55.88 180)
+		(at 36.83 58.42 180)
 		(effects
 			(font
 				(size 1.27 1.27)

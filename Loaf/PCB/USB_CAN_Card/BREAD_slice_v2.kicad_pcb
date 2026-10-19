@@ -5315,7 +5315,7 @@
 		(layer "Edge.Cuts")
 		(uuid "02d82ff1-7c43-4d1c-ab72-ca6ecc8b3672")
 	)
-	(gr_text "BREAD USB Slice 2026\noshe.io\nREV 1.0"
+	(gr_text "BREAD USB Slice 2026\noshe.io\nRev 1.0"
 		(at 183.404 124.166 0)
 		(layer "F.SilkS")
 		(uuid "fcba7ae7-a386-47eb-b1bb-4702cbedb64c")
