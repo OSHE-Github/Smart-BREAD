@@ -13,7 +13,7 @@ if timeDebug:
     start = time.perf_counter()
 
 #Enable threading
-multiThread = 1;
+multiThread = 0;
 threadLiving = array.array("b", [0,0,0,0])
 
 #Init memory monitor

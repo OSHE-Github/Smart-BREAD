@@ -20,3 +20,5 @@ can.set_mode(MCP2515.MODE_NORMAL)
 
 while True:
     print(can.recv(timeout=2))
+    #msg = input("Scream back: ")
+    #can.send(0x12, msg.encode(), extended = True)

@@ -78,11 +78,15 @@
       ],
       "drc_exclusions": [
         [
-          "silk_edge_clearance|139317000|55572000|d904a112-e838-44c4-ba5f-e0091c592bcc|9d39ba34-9dbc-4315-8b46-9ea3071256fb",
+          "lib_footprint_mismatch|118621500|87757000|4f232c73-f7fd-4890-bc8f-9b59241bcae4|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
-          "silk_edge_clearance|192537000|55572000|d904a112-e838-44c4-ba5f-e0091c592bcc|e973f5cd-f9ac-4187-8852-2737f749f36d",
+          "silk_edge_clearance|134105000|55526000|d904a112-e838-44c4-ba5f-e0091c592bcc|9d39ba34-9dbc-4315-8b46-9ea3071256fb",
+          ""
+        ],
+        [
+          "silk_edge_clearance|187325000|55526000|d904a112-e838-44c4-ba5f-e0091c592bcc|e973f5cd-f9ac-4187-8852-2737f749f36d",
           ""
         ],
         [
@@ -564,7 +568,7 @@
       "plot": "../Gerbers/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../../../../../../Downloads/BREAD_slice_v2.stl",
       "svg": "",
       "vrml": ""
     },
@@ -684,7 +688,7 @@
         "uuid": "7f913798-a7fb-4519-b930-d05e163d3032"
       }
     ],
-    "used_designators": "#PWR3,#PWR16,#PWR18,#PWR20-23,#PWR27-37,#PWR40-57,A2,C1,C3-10,J2,R3-7,R15-17,RN1,RN3,SW1,U1-7,Y2",
+    "used_designators": "#PWR3-5,#PWR14-18,#PWR20-23,#PWR27-37,#PWR39-59,A1-2,C1,C3-17,CN1-2,J2,R3-7,R15-17,RN1,RN3,SW1,U1-7,Y2",
     "variants": []
   },
   "sheets": [
