@@ -76,7 +76,24 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "lib_footprint_mismatch|106982000|73152000|36071a86-7d52-41ef-9e2e-d34d49f234a6|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "silk_edge_clearance|101449478|66992000|100cf967-c072-46a8-8045-a9d5052b2089|af009c34-9fbc-40d7-bd8a-a033b9e2a2d8",
+          ""
+        ],
+        [
+          "silk_edge_clearance|101449478|79312000|100cf967-c072-46a8-8045-a9d5052b2089|de8921d8-4dac-426b-87b9-e274a7b047a1",
+          ""
+        ],
+        [
+          "track_dangling|149352000|69977000|e8a02b90-4e00-45ed-9c69-34e005dfda2d|00000000-0000-0000-0000-000000000000",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -147,22 +164,22 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.0,
-        "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.5,
+        "min_clearance": 0.1016,
+        "min_connection": 0.1016,
+        "min_copper_edge_clearance": 0.1016,
         "min_groove_width": 0.0,
-        "min_hole_clearance": 0.25,
-        "min_hole_to_hole": 0.25,
-        "min_microvia_diameter": 0.2,
+        "min_hole_clearance": 0.1016,
+        "min_hole_to_hole": 0.2032,
+        "min_microvia_diameter": 0.1,
         "min_microvia_drill": 0.1,
         "min_resolved_spokes": 2,
-        "min_silk_clearance": 0.0,
-        "min_text_height": 0.8,
-        "min_text_thickness": 0.08,
-        "min_through_hole_diameter": 0.3,
-        "min_track_width": 0.0,
-        "min_via_annular_width": 0.1,
-        "min_via_diameter": 0.5,
+        "min_silk_clearance": 0.1524,
+        "min_text_height": 1.016,
+        "min_text_thickness": 0.1524,
+        "min_through_hole_diameter": 0.1016,
+        "min_track_width": 0.1016,
+        "min_via_annular_width": 0.2032,
+        "min_via_diameter": 0.254,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -514,7 +531,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.1016,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -525,9 +542,9 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
+        "track_width": 0.1016,
         "tuning_profile": "",
-        "via_diameter": 0.6,
+        "via_diameter": 0.254,
         "via_drill": 0.3,
         "wire_width": 6
       }
