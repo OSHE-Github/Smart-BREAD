@@ -12902,7 +12902,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 139.7 110.236 90)
 			(hide yes)
 			(show_name no)
@@ -13144,7 +13144,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 139.7 117.856 90)
 			(hide yes)
 			(show_name no)
@@ -13542,7 +13542,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 157.48 110.236 90)
 			(hide yes)
 			(show_name no)
@@ -13701,7 +13701,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 139.7 125.476 90)
 			(hide yes)
 			(show_name no)
@@ -14637,7 +14637,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 157.48 125.476 90)
 			(hide yes)
 			(show_name no)
@@ -17243,7 +17243,7 @@
 				)
 			)
 		)
-		(property "Value" "10pF"
+		(property "Value" "150pF"
 			(at 157.48 117.856 90)
 			(hide yes)
 			(show_name no)
