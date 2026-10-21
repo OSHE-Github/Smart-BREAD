@@ -5,6 +5,7 @@ import os, psutil
 import screenElements, CAN
 from screenElements import drawBorders, evil_noise
 from converters import cv2topygame
+from CAN import send, send_conveyor, init as can_init
 
 #Process time monitor
 timeDebug = 1
@@ -161,7 +162,7 @@ if multiThread:
 
     camThread.start()
     graphicThread.start()
-    CAN.sanity()
+    CAN.init()
 
     threadLiving[0] = camThread.is_alive()
     threadLiving[1] = graphicThread.is_alive()
@@ -184,6 +185,7 @@ if not multiThread:
     init()
     camInit()
     graphicInit()
+    CAN.init()
 
 def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN checks
     global flagArr
@@ -336,22 +338,20 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
                 sys.exit()
 
         if addSpeedButton.handle_event(event):
-            if convArr[0] < 100:
-                convArr[0] = convArr[0] + 1
-            else:
-                convArr[0] = 100
+            convArr[0] = min(convArr[0] + 1, 100)
+            CAN.send_conveyor(convArr[0], convArr[2])
 
         if minusSpeedButton.handle_event(event):
-            if convArr[0] > 0:
-                convArr[0] = convArr[0] - 1
-            else:
-                convArr[0] = 0
+            convArr[0] = max(convArr[0] - 1, 0)
+            CAN.send_conveyor(convArr[0], convArr[2])
 
         if leftDirButton.handle_event(event):
             convArr[2] = -1
+            CAN.send_conveyor(convArr[0], convArr[2])
 
         if rightDirButton.handle_event(event):
             convArr[2] = 1
+            CAN.send_conveyor(convArr[0], convArr[2])
 
         if homeButton.handle_event(event):
             global ConveyorFlag
