@@ -17,14 +17,18 @@ if debugBitrate:
 can.set_bitrate(16_000_000, 1_000_000)   # whichever worked
 can.set_mode(MCP2515.MODE_NORMAL)
 
-# 8 bytes that send random crap, buttons, send, recieve signal, adress latter. Buttons transmit CAN stuff..
+#
 while True:
     print(can.recv(timeout=2))
-    #msg = input("Scream back: ")
-    #can.send(0x12, msg.encode(), extended = True)
+    msg = input("Scream back: ")
+    can.send(0x12, msg.encode(), extended = True)
 
-def sendCANMessage(adress, data1, data2):
-    tx_msg = can.Message(adress, extended=True, data=[data1, data2, 0, 0, 0, 0, 0, 0])
+def sendCANMessage(address, IO, mode, pin, bDigi, pwmDuty, data):
+
+    byte1 = 0; byte4 = 0;
+
+
+    tx_msg = can.Message(address, extended=True, data=[byte0, byte1, byte2, byte3, byte4, byte5, byte6, byte7])
     can.send(tx_msg)
     print(f"Sent: {tx_msg}")
 

@@ -5,7 +5,6 @@ import os, psutil
 import screenElements, CAN
 from screenElements import drawBorders, evil_noise
 from converters import cv2topygame
-from CAN import send, send_conveyor, init as can_init
 
 #Process time monitor
 timeDebug = 1
@@ -37,6 +36,7 @@ def init():
 
     # Initialize Pygame
     pygame.init()
+    CAN.init()
 
     #Screen Vars
     clock = pygame.time.Clock()
@@ -339,19 +339,16 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
         if addSpeedButton.handle_event(event):
             convArr[0] = min(convArr[0] + 1, 100)
-            CAN.send_conveyor(convArr[0], convArr[2])
 
         if minusSpeedButton.handle_event(event):
             convArr[0] = max(convArr[0] - 1, 0)
-            CAN.send_conveyor(convArr[0], convArr[2])
 
         if leftDirButton.handle_event(event):
             convArr[2] = -1
-            CAN.send_conveyor(convArr[0], convArr[2])
 
         if rightDirButton.handle_event(event):
             convArr[2] = 1
-            CAN.send_conveyor(convArr[0], convArr[2])
+            print(CAN.read(0x1A3, 0, 1, 0, 0))
 
         if homeButton.handle_event(event):
             global ConveyorFlag
