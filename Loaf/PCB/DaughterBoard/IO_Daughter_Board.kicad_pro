@@ -78,6 +78,22 @@
       ],
       "drc_exclusions": [
         [
+          "lib_footprint_issues|110555000|62762500|d500f6ff-5fa5-4a11-9b9d-5b85d473f1cf|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "lib_footprint_issues|153230000|62762500|6b1e825c-8ff6-41a4-8ed2-37aeaa2448cb|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "lib_footprint_issues|173382500|91805000|1efa8b4e-16bf-485c-b85b-362c249fc854|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
+          "lib_footprint_issues|90642500|91795000|baa5d6b6-6712-498f-8826-1418d706d8d6|00000000-0000-0000-0000-000000000000",
+          ""
+        ],
+        [
           "silk_edge_clearance|143327000|126800000|da480c4f-cacf-415a-9f73-799cb5419153|cb1f52eb-2d3b-4bfe-8df8-80fe3c921f6d",
           ""
         ],
@@ -554,7 +570,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "Gerbers/",
       "specctra_dsn": "",
       "step": "",
       "vrml": ""
