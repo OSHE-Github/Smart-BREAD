@@ -63,7 +63,7 @@
           "min_clearance": 0.5,
           "min_island_area": 10.0,
           "min_thickness": 0.25,
-          "pad_connection": 1,
+          "pad_connection": 2,
           "remove_islands": 0,
           "thermal_relief_gap": 0.5,
           "thermal_relief_spoke_width": 0.5
@@ -76,7 +76,36 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "silk_edge_clearance|160342000|64577000|e2923259-3904-498d-b1e2-2415fb825155|20f9ee6d-300a-492d-b4d2-32c633224c7e",
+          ""
+        ],
+        [
+          "silk_edge_clearance|168724000|64577000|e2923259-3904-498d-b1e2-2415fb825155|ef61d364-1ac1-448f-9e35-722294a28882",
+          ""
+        ],
+        [
+          "silk_edge_clearance|175582000|64577000|e2923259-3904-498d-b1e2-2415fb825155|8ca0b0ed-27a6-41e9-be2e-2b72e0c0f0ab",
+          ""
+        ],
+        [
+          "silk_edge_clearance|182440000|64577000|e2923259-3904-498d-b1e2-2415fb825155|031c0e88-ed02-4c12-ae12-28ef710cfd21",
+          ""
+        ],
+        [
+          "silk_edge_clearance|189298000|64577000|e2923259-3904-498d-b1e2-2415fb825155|c880af54-6bee-4c42-9892-fa01fd5c246a",
+          ""
+        ],
+        [
+          "silk_edge_clearance|197685000|64577000|e2923259-3904-498d-b1e2-2415fb825155|7e7b7e12-9c6f-423b-9811-21928373151d",
+          ""
+        ],
+        [
+          "silk_edge_clearance|208806500|123618000|e2923259-3904-498d-b1e2-2415fb825155|3463fd56-20ed-442c-913c-0af700ee4b32",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -178,6 +207,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -189,6 +219,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -200,6 +231,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -211,7 +243,6 @@
       ],
       "track_widths": [
         0.0,
-        0.2,
         1.0,
         2.25,
         5.5
@@ -246,10 +277,6 @@
         {
           "diameter": 0.0,
           "drill": 0.0
-        },
-        {
-          "diameter": 0.7064,
-          "drill": 0.3
         }
       ],
       "zones_allow_external_fillets": false
@@ -490,6 +517,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
+      "same_local_global_power": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
       "similar_power": "warning",
@@ -537,8 +565,8 @@
     "meta": {
       "version": 5
     },
-    "net_colors": null,
-    "netclass_assignments": null,
+    "net_colors": {},
+    "netclass_assignments": {},
     "netclass_patterns": []
   },
   "pcbnew": {
@@ -682,7 +710,7 @@
         "uuid": "38f449ac-36af-429e-8a72-37afdf643ee3"
       }
     ],
-    "used_designators": "A1-5,C1-4,R1-4,J1-11,#PWR1-45,SW1-4,RN2-3",
+    "used_designators": "#PWR1-51,A1-6,C1-4,H1-4,J1-11,R1-12,RN1-3,SW1-4",
     "variants": []
   },
   "sheets": [
