@@ -31,7 +31,7 @@ def init():
     global clock, objects
     global screen, width, height
     global ButtonXScale, ButtonYScale, ButtonFontSize, bordWidth
-    global flagArr, convArr, constArr, numSorted
+    global flagArr, convArr, constArr, numSorted, confirmArr
     global BG_COLOR, BORDER_COLOR, TEXT_FIELD_COLOR, WHITE, BLACK, RED, NORMAL_COLOR, HOVER_COLOR, PRESS_COLOR
 
     # Initialize Pygame
@@ -59,8 +59,9 @@ def init():
     bordWidth = height/50
 
     #Arrays of bytes
-    flagArr = array.array("b", [0, 1, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, and Info Flags in array form
+    flagArr = array.array("b", [0, 1, 0, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, Info, Confirm Flags in array form
     convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
+    confirmArr = array.array("b", [0,0]) #Confirm screen flag, left, right buttons
     constArr = array.array("b", [60]) #FPS
 
     #Conveyor Vars
@@ -290,6 +291,8 @@ def CamScreen(): #Screen for elements of the camera view screen
 
 def ConveyorScreen(): #Screen for elements of the conveyor control screen
     global convArr
+    global confirmArr
+    global flagArr
     global numSorted
 
     #Draw background elements
@@ -301,6 +304,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     speedText = font.render(f"{convArr[0]}%", True, BORDER_COLOR)
     measSpeedText = font.render(f"{convArr[1]}%", True, BORDER_COLOR)
     sortedCount = font.render(f"{numSorted}", True, BORDER_COLOR)
+    dirText = font.render(f"Direction: {'Left' if convArr[2] == 0 else 'Right'}", True, BORDER_COLOR)
 
     #Draw detail boxes onscreen
     pygame.draw.rect(screen, TEXT_FIELD_COLOR, pygame.Rect(ssBoxX, boxY, boxWidth, boxHeight), border_radius=0) #Set speed box
@@ -311,6 +315,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     screen.blit(setSpeedLabel, (ssLabelX, ssLabelY))
     screen.blit(mesSpeedLabel, (msLabelX, msLabelY))
     screen.blit(objText, (osLabelX, osLabelY))
+    screen.blit(dirText, (width/2 - dirText.width/2, boxY + boxHeight + dirText.height/6))
 
     #Draw changing text onscreen
     screen.blit(speedText, (ssBoxX + boxWidth/2 - speedText.width/2, boxY + speedText.height/6))
@@ -344,14 +349,17 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
             convArr[0] = max(convArr[0] - 1, 0)
 
         if leftDirButton.handle_event(event):
-            convArr[2] = -1
+            if convArr[2] == 1:
+                confirmArr[0] = 1
+                flagArr[6] = 1
 
         if rightDirButton.handle_event(event):
-            convArr[2] = 1
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
+                if convArr[2] == 0:
+                    confirmArr[1] = 1
+                    flagArr[6] = 1
+            #print(CAN.read(0x1A3, 0, 1, 0, 0))
 
         if homeButton.handle_event(event):
-            global ConveyorFlag
             flagArr[3] = 0
 
     #Draw the buttons to the screen
@@ -364,6 +372,56 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     #Load the OSHE logo to the bottom right of the screen
     screen.blit(osheLogo, (width - bordWidth - owidth*1.1, height - bordWidth - oheight*1.1))
     bootAnim.render(screen, ((int) ((width-bootAnim.width)/2), (int) ((height-bootAnim.height)/3)))
+
+    #Update frame buffer
+    pygame.display.update()
+    clock.tick(constArr[0])
+
+def ConfirmScreen(): #Screen for conveyor direction confirmation
+    global flagArr
+    global convArr
+    global confirmArr
+
+
+    screen.fill(BG_COLOR)
+    drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
+    font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/1.5))
+    text = font.render("Are you sure you want to change the direction of the conveyor?", True, BORDER_COLOR)
+    screen.blit(text, ((int) (((width-text.width)/2)), (int) (((height-text.height)/2) - text.height/2)))
+
+    yConfButton = screenElements.Button("Yes", (int) (width - 3.25*ButtonXScale), (int) (height/2 + ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    nConfButton = screenElements.Button("No", (int) (width - 1.75*ButtonXScale), (int) (height/2 + ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+    yConfButton.update()
+    nConfButton.update()
+
+    #Event handlers for all of the buttons
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+        if yConfButton.handle_event(event):
+            if confirmArr[0] == 1:
+                convArr[2] = 0
+                confirmArr[0] = 0
+            if confirmArr[1] == 1:
+                convArr[2] = 1
+                confirmArr[1] = 0
+            flagArr[6] = 0
+
+        if nConfButton.handle_event(event):
+            confirmArr[0] = 0
+            confirmArr[1] = 0
+            flagArr[6] = 0
+
+    yConfButton.draw(screen)
+    nConfButton.draw(screen)
 
     #Update frame buffer
     pygame.display.update()
@@ -460,12 +518,18 @@ while True:
     #First check if there is a fault flag raised, and intentionally catch the entire program if there is.
     while(flagArr[4]):
         FaultScreen()
-    
+
+    #Confirm screen rendering
+    if(flagArr[6]):
+        ConfirmScreen()
+        continue
+
     #Camera screen rendering
     if(flagArr[2]):
         CamScreen()
         continue
-        
+
+    #Conveyor screen rendering
     if(flagArr[3]):
         ConveyorScreen()
         continue
