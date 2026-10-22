@@ -6318,85 +6318,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+12V")
-		(at 39.37 124.46 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "12d7fe68-0a3a-452c-b20f-5d07681e8b2a")
-		(property "Reference" "#PWR07"
-			(at 43.18 124.46 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+12V"
-			(at 35.56 124.4599 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 39.37 124.46 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 39.37 124.46 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+12V\""
-			(at 39.37 124.46 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "99f7ce21-408a-47dd-ad97-c7bc921c6007")
-		)
-		(instances
-			(project "BREAD_slice_v2"
-				(path "/7f913798-a7fb-4519-b930-d05e163d3032"
-					(reference "#PWR07")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R_US")
 		(at 167.64 151.13 270)
 		(mirror x)
@@ -8772,6 +8693,7 @@
 		)
 		(property "Value" "+12V"
 			(at 76.2 124.4601 90)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

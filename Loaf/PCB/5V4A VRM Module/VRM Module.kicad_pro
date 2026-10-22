@@ -80,10 +80,6 @@
         [
           "starved_thermal|168000000|89000000|7686d0f7-0f4f-4a07-a94e-5ca14a34caa4|8828620b-d130-4ec4-afee-6a0ace0be6a2|F.Cu",
           ""
-        ],
-        [
-          "unconnected_items|168000000|76300000|F.Cu|4|98d92d97-5343-4b38-870b-96d994128f1f|6cc000f9-e44b-4d89-9223-676ebbe55cc5",
-          ""
         ]
       ],
       "meta": {
