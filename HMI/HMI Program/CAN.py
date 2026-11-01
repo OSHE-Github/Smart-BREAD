@@ -55,7 +55,7 @@ def _worker():
         except Exception as e:
             print(f"Error sending CAN message: {e}")
 
-#Read a specific pin or range of pins from the input slice. Returns recieved CAN message
+# Read a specific pin or range of pins from the input slice. Returns recieved CAN message
 def read(address, IO, mode, pin, bulkPins):
 
     #Error checking and display
@@ -89,3 +89,58 @@ def read(address, IO, mode, pin, bulkPins):
     print(b"Sent: {tx_msg}")
 
     return canBus.recv(timeout=1)
+
+'''Write Hmi
+HMI sends over CAN (whatever we already did in the read command)
+IO reads message (whatever was recieved), converts to output and then sets pin analog or digital.'''
+# read message -> convert to output -> set pins based on output
+
+# Write to a specific pin or range of pins from the output slice
+def write(address, IO, mode, pin, bulkPins):
+
+
+    #Error checking and display
+    if IO > 3 or IO < 0:
+        print("ERORR: Invalid IO bits set!")
+        return -1
+
+    if mode > 3 or mode < 0:
+        print("ERORR: Invalid mode bits set!")
+        return -1
+
+    if pin > 15 or pin < 0:
+        print("ERROR: Invalid pin bits set!")
+        return -1
+
+    match address:
+        case 0x1A3:
+            if IO == 1:
+                pin = 0
+            else:
+                pin = 1
+        case 0x1A4:
+            if IO == 1:
+                pin = 0
+            else:
+                pin = 1
+        case _:
+            print("ERROR: Unknown address!")
+            return -1
+
+    if mode == 2:
+        match address:
+            case 0x1A3:
+                if IO == 1:
+                    bulkPins = 0
+                else:
+                    bulkPins = 1
+            case 0x1A4:
+                if IO == 1:
+                    bulkPins = 0
+                else:
+                    bulkPins = 1
+            case _:
+                print("ERROR: Unknown address!")
+                return -1
+
+
