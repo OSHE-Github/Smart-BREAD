@@ -1,49 +1,48 @@
 #include <SPI.h>
-#include <mcp2515.h>
+#include <ACAN2515.h>
 #include "MCP3208.h"
 
-//MCP2515 Setup
-#define CANCS 16
-#define CANINT 2
-#define canTXID 100
+//CAN Configuration
+#define CANCS   1
+#define CANINT  4
+#define canTXID 0x100
+#define canRXID 0x1A3
+#define OSCFREQ 16000000UL // 16 MHz
+#define CANSPEED 500000 // 500 kbps
 
-//Digital pin setup
-#define numDigital 8
-const uint8_t digiPins[numDigital] {3, 4, 5, 6, 7, 8, 9, 10}; //DIO0, DIO1, DIO2, DIO3, DIO4, DIO5, DIO6, DIO7
-
-//Analog pin Setup
-#define ADCCS 17
-#define numAnalog 8
-
-
-//Runtime Flags
-#define canDebug false
+ACAN2515 can(CANCS, SPI, CANINT);
+CANMessage txMSG;
+CANMessage rxMSG;
 
 //Can Frame Vars
-uint8_t dataLen = 0;
+uint8_t dataLen = 8;
 int16_t canID = 0;
 
 //Decoded value vars
 uint8_t modeIO = 0;
-uint8_t modeFlag = 0 ; 
+uint8_t modeFlag = 0 ;
 uint8_t pinNum = 0;
 uint8_t res1 = 0;
 uint8_t res2 = 0;
 int16_t bulkDigi = 0;
 uint8_t pwmDuty = 0;
-int16_t dataSeg = 0; 
+int32_t dataSeg = 0;
 
-//Runtime Vars
-uint16_t analog = 0;
-char digital = 0;
-uint16_t digitalBulk = 0;
+//Counters
+uint32_t lastMessageTime = 0;
+uint32_t messageCounter = 0;
 
-//Create known IC objects
-MCP2515 canBus(CANCS);
+//ADC Configuration
+#define ADCCS 7
+#define numAnalog 8
 MCP3208 externADC;
 
-struct can_frame canRX;
-struct can_frame canTX;
+//Digital pin setup
+#define numDigital 8
+const uint8_t digiPins[numDigital] {26, 22, 21, 20, 19, 18, 17, 16}; //DIO0, DIO1, DIO2, DIO3, DIO4, DIO5, DIO6, DIO7
+
+//Runtime Flags
+#define canDebug false
 
 //Decode the CAN message recieved into the required fields. Refer to I/O Slice CAN message spec for details.
 void canDecode(uint8_t canData[]){
@@ -54,143 +53,205 @@ void canDecode(uint8_t canData[]){
 
   //Reserved data reading
   //res1 = canMsg.data[1];
-  //res2 = canMsg.data[4];
 
   //PWM Duty cycle reading
-  if(modeFlag == 2){pwmDuty = canData[5];}
+  if(modeFlag == 2){pwmDuty = canData[4];}
 
   //Bulk Digital pin decoding
   if(modeFlag == 3){
     bulkDigi = canData[2];
     bulkDigi = (bulkDigi << 8) + canData[3];
   }
-  
+
   //Data Segment Decoding
-  dataSeg = canData[6];
+  dataSeg = canData[5];
+  dataSeg = (dataSeg << 8) + canData[6];
   dataSeg = (dataSeg << 8) + canData[7];
 }
 
 //Encode a new message and return the encoded message
-void canEncode(uint16_t bulkDigi, uint16_t dataSeg){
+void canEncode(uint16_t bulkDigi, uint8_t pwmDuty, uint32_t dataSeg){
+
+  txMSG.id = canTXID;
+  txMSG.len = dataLen;
 
   //Info Byte encoding
-  canTX.data[0] = 0b10000000;
-  canTX.data[0] = canTX.data[0] + pinNum + (modeFlag << 4);
+  txMSG.data[0] = 0b10000000;
+  txMSG.data[0] = txMSG.data[0] + pinNum + (modeFlag << 4);
 
   //Reserved bits encoding
-  canTX.data[1] = 0; canTX.data[4] = 0;
+  txMSG.data[1] = 0; txMSG.data[4] = 0;
 
   //Bulk digital data encoding
-  canTX.data[2] = char(bulkDigi >> 8);
-  canTX.data[3] = char(bulkDigi & 0b0000000011111111);
+  txMSG.data[2] = char(bulkDigi >> 8);
+  txMSG.data[3] = char(bulkDigi & 0b0000000011111111);
 
   //Data segment encoding
-  canTX.data[6] = char(dataSeg >> 8);
-  canTX.data[7] = char(dataSeg & 0b0000000011111111);
-  
-  //We don't care about PWM Duty cycle on input slice
-  canTX.data[5] = 0;
+  txMSG.data[5] = char(dataSeg >> 16);
+  txMSG.data[6] = char(dataSeg >> 8) & 0b000000000000000011111111;
+  txMSG.data[7] = char(dataSeg & 0b000000000000000011111111);
+
+  //Encode PWM duty cycle
+  txMSG.data[4] = pwmDuty;
 }
 
+uint16_t readAnalog(uint8_t pin){
+  uint16_t out = 0;
+  Serial.print("Reading analog pin: "); Serial.println(digiPins[pin]);
+  out = externADC.analogRead(pin);
+  Serial.print(out); Serial.println(" Counts");
+
+  float voltage = (out * 3.3) / 4095.0;
+  Serial.print(voltage); Serial.println(" V");
+
+  return out;
+}
+
+//Read specified digital pin
+uint16_t readDigital(uint8_t pin){
+  uint16_t out = 0;
+  out = digitalRead(digiPins[pin]);
+  Serial.print("Read digital pin: ");
+  Serial.println(digiPins[pin]);
+  Serial.println(out);
+  return out;
+}
+
+//Read many digital pins
+uint16_t readManyDigital(uint16_t pins){
+  uint16_t out = 0;
+  for(uint16_t i = 0; i < numDigital; i++){
+    //Mask pins so that we can efficiently calculate if the pin is to be read or not.
+    uint16_t mask = 0b0000000000000000 + (1 << i);
+    uint16_t flag = pins & mask;
+
+    //Read and add result to output.
+    if(mask > 0){
+      out = out + (digitalRead(digiPins[i]) << i);
+    }
+  }
+  Serial.print("Read from all digital pins: "); Serial.println(out, BIN);
+  return out;
+}
+
+void readPWM(uint8_t pin){
+  //Listen for pwm signal
+  unsigned long highTime = pulseIn(digiPins[pin], HIGH);
+  unsigned long lowTime = pulseIn(digiPins[pin], LOW);
+  float freq = 0;
+  float duty = 0;
+
+  if (highTime + lowTime > 0) {
+    unsigned long period = highTime + lowTime;
+    freq = 1000000.0 / period;
+    duty = ((float)highTime / period) * 100.0;
+
+    Serial.print("Freq: ");
+    Serial.print(freq);
+    Serial.print(" Hz | Duty Cycle: ");
+    Serial.print(duty);
+    Serial.println(" %");
+  } else {
+    Serial.println("No PWM signal present");
+    freq = 0;
+    duty = 0;
+  }
+
+  pwmDuty = uint8_t(255 * (duty/100.0));
+  dataSeg = freq;
+}
 
 void setup() {
-  //Serial Setup
+  //Serial monitor init
   Serial.begin(115200);
-  while (!Serial) {}
+  while(!Serial){}
 
-  //Reset the MCP2515 chip before we configure it
-  canBus.reset();
+  //SPI Config
+  SPI.setRX(0);
+  SPI.setSCK(2);
+  SPI.setTX(3);
+  SPI.begin();
 
-  //Configure MCP3208 ADC and start it up at 12 bit resolution
+  ACAN2515Settings settings(OSCFREQ, CANSPEED);
   externADC.begin(ADCCS);
-  externADC.analogReadResolution(12); 
+  externADC.analogReadResolution(12);
 
-  
-  //Set up device for highest speed we can permit
-  if (canBus.setBitrate(CAN_1000KBPS, MCP_16MHZ) == MCP2515::ERROR_OK) {}
-  else {
-    Serial.println("Error: Failed to set Bitrate/Clock configuration.");
-    while(true){}
+  Serial.println("Initializing MCP2515...");
+  const uint32_t initErrorCode = can.begin(settings, [] { can.isr(); });
+
+  if (initErrorCode == 0) {
+    Serial.println("MCP2515 Initialized Successfully!");
+  } else {
+    Serial.print("Initialization failed. Error code: 0x");
+    Serial.println(initErrorCode, HEX);
+    while (1);
   }
 
-  //SAet to normal mode and hang if it can't
-  if (canBus.setNormalMode() == MCP2515::ERROR_OK) {}
-  else {
-    Serial.println("Error: Failed to set Normal Mode.");
-    while(true){}
-  }
-
-  //Format outgoing CAN message
-  canTX.can_id = canTXID;
-  canTX.can_dlc = 8; 
-
-
-  //Set up all digital pins to be inputs
   for(char i = 0; i < numDigital; i++){
-    pinMode(i, INPUT);
+    pinMode(digiPins[i], INPUT);
   }
 }
 
 void loop() {
 while(true){
-  //Check if there is a message
-  if (canBus.readMessage(&canRX) == MCP2515::ERROR_OK) {
-    Serial.println("Can message recieved!");
-
+  //Recieve the CAN message
+  if (can.available()) {
+    can.receive(rxMSG);
     //Yoink ID and data size
-    canID = canRX.can_id;
-    dataLen = canRX.can_dlc;
-
-    //CAN frame debugging
-    if(canDebug){
-      Serial.print("Data from ID: 0x"); Serial.print(canID, HEX);
-      Serial.print(" [Size: "); Serial.print(dataLen); Serial.print("] RAW Data: ");
-      for (int i = 0; i < canRX.can_dlc; i++)  {
-        Serial.print(canRX.data[i], HEX);
-        Serial.print(" ");
-      }
-      Serial.println();
-    }
+    canID = rxMSG.id;
+    dataLen = rxMSG.len;
 
     //Skip this frame if it isn't what we want
-    if(canID != 0x1A3 && dataLen != 8){continue;}
+    if(canID != canRXID && dataLen != 8){continue;}
 
     //Decode the frame if it is of the expected length and ID
-    canDecode(canRX.data);      
-    //Mode 0 = Analog
-    if(modeFlag == 0){
-      Serial.print("Reading analog pin: "); Serial.println(int(pinNum));
+    canDecode(rxMSG.data);
 
-      analog = externADC.analogRead(pinNum);
-      float voltage = (analog * 5.0) / 4095.0;
-      Serial.print(analog); Serial.println(" Counts");
-      Serial.print(voltage); Serial.println(" V");
+    switch(modeFlag){
+      //Analog Case
+      case 0:
+        dataSeg = readAnalog(pinNum);
+      break;
 
-      canEncode(bulkDigi, analog);
-      if(canBus.sendMessage(&canTX) == MCP2515::ERROR_OK){
-        Serial.print("Message Sent! ID: 0x");
-        Serial.println(canTX.can_id, HEX);
-      }else{
-        Serial.println("Error sending message! Check bus wiring, power, and termination.");
-      }
+      //Digital Case
+      case 1:
+        dataSeg = readDigital(pinNum);
+      break;
+
+      //Bulk Digital Case
+      case 2:
+        dataSeg = readManyDigital(bulkDigi);
+      break;
+
+      //PWM Case
+      case 3:
+        readPWM(pinNum);
+      break;
     }
 
-    if(modeFlag == 1){
-      Serial.print("Reading digital pin: "); Serial.println(int(pinNum));
-      digital = digitalRead(digiPins[pinNum]);
-      canEncode(bulkDigi, digital);
-      if(canBus.sendMessage(&canTX) == MCP2515::ERROR_OK){
-        Serial.print("Message Sent! ID: 0x");
-        Serial.println(canTX.can_id, HEX);
-      }else{
-        Serial.println("Error sending message! Check bus wiring, power, and termination.");
-      }
+    canEncode(bulkDigi, pwmDuty, dataSeg);
 
-
-
-
-
-
+    //Print CAN Frame
+    Serial.print("Data: [");
+    for(char i = 0; i < 7; i++){
+      Serial.print(txMSG.data[i], BIN);
+      Serial.print(", ");
     }
+    Serial.print(txMSG.data[7], BIN);
+    Serial.println("]");
+
+    can.tryToSend(txMSG);
   }
+
+
 }}
+
+
+
+
+
+
+
+
+
+

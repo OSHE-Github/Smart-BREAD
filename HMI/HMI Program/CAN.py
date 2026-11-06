@@ -4,8 +4,8 @@ sys.path.append('../../Loaf/Programs/USB-CAN Card')
 from mcp2515 import MCP2515, open_first_mcp2210
 
 #Bus config
-CS_PIN = 4
-INT_PIN = 3
+CS_PIN = 3
+INT_PIN = 4
 OSC_HZ = 16_000_000
 BITRATE = 1_000_000        # was 1 Mbps ("whichever worked") in mainLoaf.py
 CONVEYOR_ID = 0x12         # extended ID used by the old sendCANMessage()
@@ -87,8 +87,6 @@ def read(address, IO, mode, pin, bulkPins):
 
     canBus.send(address, txBuf, extended = True)
     print(b"Sent: {tx_msg}")
-
-    return canBus.recv(timeout=1)
 
 '''Write Hmi
 HMI sends over CAN (whatever we already did in the read command)

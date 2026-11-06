@@ -5207,7 +5207,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "3.3uF"
+		(property "Value" "3.3nF"
 			(at 0 -1.85 0)
 			(layer "B.Fab")
 			(uuid "170bfa6c-8feb-43a2-99ec-851013f52cab")
@@ -7376,12 +7376,6 @@
 	(group ""
 		(uuid "df10c8f6-eff2-4283-9050-f90f1c6404d0")
 		(members "51037459-c133-4816-8da5-c795f5f27071" "8d6977b9-bbea-486a-a173-44cfab188236")
-	)
-	(group ""
-		(uuid "54f4feb0-22be-4b7e-84ba-114887a2576e")
-		(members "1d7e2ec8-c5d1-47b7-bb2d-607e138c9a76" "2917be36-d228-4d99-85d6-6ed8625f615a"
-			"a67f9a2d-1899-4145-ae02-a782579cc8f8"
-		)
 	)
 	(embedded_fonts no)
 )
