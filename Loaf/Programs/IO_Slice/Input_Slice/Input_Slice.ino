@@ -7,16 +7,25 @@
 #define CANINT  4
 #define canTXID 0x100
 #define canRXID 0x1A3
-#define OSCFREQ 16000000UL // 16 MHz
+#define OSCFREQ 16000000 // 16 MHz
 #define CANSPEED 500000 // 500 kbps
 
+//CAN Setup
 ACAN2515 can(CANCS, SPI, CANINT);
 CANMessage txMSG;
 CANMessage rxMSG;
+CANMessage workMSG;
 
 //Can Frame Vars
 uint8_t dataLen = 8;
 int16_t canID = 0;
+
+//CAN Buffers
+#define bufSize 16
+CANMessage txBuffer[bufSize];
+CANMessage rxBuffer[bufSize];
+char txFlagBuf[bufSize];
+char rxFlagBuf[bufSize];
 
 //Decoded value vars
 uint8_t modeIO = 0;
@@ -31,6 +40,10 @@ int32_t dataSeg = 0;
 //Counters
 uint32_t lastMessageTime = 0;
 uint32_t messageCounter = 0;
+
+//Core vars
+volatile char core0Setup = 0;
+volatile char core1Setup = 0;
 
 //ADC Configuration
 #define ADCCS 7
@@ -70,29 +83,32 @@ void canDecode(uint8_t canData[]){
 }
 
 //Encode a new message and return the encoded message
-void canEncode(uint16_t bulkDigi, uint8_t pwmDuty, uint32_t dataSeg){
+CANMessage canEncode(uint16_t bulkDigi, uint8_t pwmDuty, uint32_t dataSeg){
+  CANMessage out;
 
-  txMSG.id = canTXID;
-  txMSG.len = dataLen;
+  out.id = canTXID;
+  out.len = dataLen;
 
   //Info Byte encoding
-  txMSG.data[0] = 0b10000000;
-  txMSG.data[0] = txMSG.data[0] + pinNum + (modeFlag << 4);
+  out.data[0] = 0b10000000;
+  out.data[0] = out.data[0] + pinNum + (modeFlag << 4);
 
   //Reserved bits encoding
-  txMSG.data[1] = 0; txMSG.data[4] = 0;
+  out.data[1] = 0; out.data[4] = 0;
 
   //Bulk digital data encoding
-  txMSG.data[2] = char(bulkDigi >> 8);
-  txMSG.data[3] = char(bulkDigi & 0b0000000011111111);
+  out.data[2] = char(bulkDigi >> 8);
+  out.data[3] = char(bulkDigi & 0b0000000011111111);
 
   //Data segment encoding
-  txMSG.data[5] = char(dataSeg >> 16);
-  txMSG.data[6] = char(dataSeg >> 8) & 0b000000000000000011111111;
-  txMSG.data[7] = char(dataSeg & 0b000000000000000011111111);
+  out.data[5] = char(dataSeg >> 16);
+  out.data[6] = char(dataSeg >> 8) & 0b000000000000000011111111;
+  out.data[7] = char(dataSeg & 0b000000000000000011111111);
 
   //Encode PWM duty cycle
-  txMSG.data[4] = pwmDuty;
+  out.data[4] = pwmDuty;
+
+  return out;
 }
 
 uint16_t readAnalog(uint8_t pin){
@@ -111,9 +127,9 @@ uint16_t readAnalog(uint8_t pin){
 uint16_t readDigital(uint8_t pin){
   uint16_t out = 0;
   out = digitalRead(digiPins[pin]);
-  Serial.print("Read digital pin: ");
-  Serial.println(digiPins[pin]);
-  Serial.println(out);
+  //Serial.print("Read digital pin: ");
+  //Serial.println(digiPins[pin]);
+  //Serial.println(out);
   return out;
 }
 
@@ -187,13 +203,29 @@ void setup() {
     while (1);
   }
 
+  //Capture to make sure the cores don't progress too out of sync
+  core0Setup = 1;
+  while(!core1Setup){}
+}
+
+void setup1(){
   for(char i = 0; i < numDigital; i++){
     pinMode(digiPins[i], INPUT);
   }
+
+  //Format flag buffers
+  for(char i = 0; i < bufSize; i++){
+    txFlagBuf[i] = 0;
+    rxFlagBuf[i] = 0;
+  }
+
+  //Capture to make sure the cores don't progress too out of sync
+  core1Setup = 1;
+  while(!core0Setup){}
 }
 
 void loop() {
-while(true){
+  while(true){
   //Recieve the CAN message
   if (can.available()) {
     can.receive(rxMSG);
@@ -204,46 +236,96 @@ while(true){
     //Skip this frame if it isn't what we want
     if(canID != canRXID && dataLen != 8){continue;}
 
-    //Decode the frame if it is of the expected length and ID
-    canDecode(rxMSG.data);
-
-    switch(modeFlag){
-      //Analog Case
-      case 0:
-        dataSeg = readAnalog(pinNum);
-      break;
-
-      //Digital Case
-      case 1:
-        dataSeg = readDigital(pinNum);
-      break;
-
-      //Bulk Digital Case
-      case 2:
-        dataSeg = readManyDigital(bulkDigi);
-      break;
-
-      //PWM Case
-      case 3:
-        readPWM(pinNum);
-      break;
-    }
-
-    canEncode(bulkDigi, pwmDuty, dataSeg);
-
     //Print CAN Frame
-    Serial.print("Data: [");
+    //Serial.println("Sending CAN Message");
+    Serial.print("RX Data: [");
     for(char i = 0; i < 7; i++){
-      Serial.print(txMSG.data[i], BIN);
+      Serial.print(rxMSG.data[i], BIN);
       Serial.print(", ");
     }
-    Serial.print(txMSG.data[7], BIN);
+    Serial.print(rxMSG.data[7], BIN);
     Serial.println("]");
 
-    can.tryToSend(txMSG);
+    //Search for free space in the buffer
+    for(char i = 0; i < bufSize; i++){
+      if(rxFlagBuf[i] == 0){
+        rxFlagBuf[i] = 1;
+        rxBuffer[i] = rxMSG;  
+        break;
+      }
+    }
   }
 
+  //Search for any CAN messages to send in buffer
+  for(char i = 0; i < bufSize; i++){
 
+    //Send any unsent messages
+    if(txFlagBuf[i] == 1){
+      txMSG = txBuffer[i];
+      //Print CAN Frame
+      //Serial.println("Sending CAN Message");
+      Serial.print("Data: [");
+      for(char i = 0; i < 7; i++){
+        Serial.print(txMSG.data[i], BIN);
+        Serial.print(", ");
+      }
+      Serial.print(txMSG.data[7], BIN);
+      Serial.println("]");
+
+      //Send message
+      char ok = can.tryToSend(txMSG);
+
+      //Keep trying if there was a failure
+      while(!ok){
+        ok = can.tryToSend(txMSG);
+      }
+
+      //Set flag to 0 to mark it as free space
+      txFlagBuf[i] = 0;
+    }
+  }
+}}
+
+void loop1(){
+  while(true){
+
+  for(char i = 0; i < bufSize; i++){
+
+    //Check if the buffer entry is ready
+    if(rxFlagBuf[i] == 1){
+
+      //Decode buffer entry
+      canDecode(rxBuffer[i].data);
+
+      //Read stuff
+      switch(modeFlag){
+          //Analog Case
+          case 0:
+            dataSeg = readAnalog(pinNum);
+          break;
+
+          //Digital Case
+          case 1:
+            dataSeg = readDigital(pinNum);
+          break;
+
+          //Bulk Digital Case
+          case 2:
+            dataSeg = readManyDigital(bulkDigi);
+          break;
+
+          //PWM Case
+          case 3:
+            readPWM(pinNum);
+          break;
+        }
+
+      txBuffer[i] = canEncode(bulkDigi, pwmDuty, dataSeg);
+      txFlagBuf[i] = 1;
+      rxFlagBuf[i] = 0;
+    }
+  }
+  
 }}
 
 

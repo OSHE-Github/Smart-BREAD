@@ -4,6 +4,8 @@ import array
 #Bitrate debug flags
 debugBitrate = 0
 
+time = 0.5
+
 #Set up can interface
 mcp = open_first_mcp2210()
 can = MCP2515(mcp, cs_pin=3, int_pin=4, osc_hz=16_000_000, bitrate=500_000)
@@ -32,14 +34,19 @@ def read(address, IO, mode, pin, bulkPins):
         print("ERORR: Invalid mode bits set!")
         return -1
 
-    if pin > 15 or pin < 0:
+    if (pin > 15 or pin < 0) and mode != 2:
         print("ERROR: Invalid pin bits set!")
         return -1
 
     #Byte setup
     txBuf[0] = 0
-    txBuf[0] = pin + (mode << 4) + (IO << 6)
+
+    if mode != 2:
+        txBuf[0] = pin + (mode << 4) + (IO << 6)
+
+
     if mode == 2:
+        txBuf[0] = (mode << 4) + (IO << 6)
         txBuf[2] = bulkPins & 0b0000000011111111
         txBuf[3] = (bulkPins & 0b1111111100000000) >> 8
     else:
@@ -52,11 +59,15 @@ def read(address, IO, mode, pin, bulkPins):
 
 while True:
     pin = input("What Digital pin should I read? ")
-    read(0x1A3, 0, 3, int(pin), 0)
-    recieved = can.recv(timeout=2);
+
+    pins = 0b0000000011111111
+    read(0x1A3, 0, 2, pins, 0)
+    recieved = can.recv(time);
     if recieved is not None:
-        print(f"PWM Frequency: {(recieved.data[5] << 16) + (recieved.data[6] << 8) + recieved.data[7]} Hz")
-        print(f"PWM Duty: {(recieved.data[4] / 255) * 100}%")
+        print("Recieved Data: " + bin((recieved.data[5] << 16) + (recieved.data[6] << 8) + recieved.data[7]))
+
+
+
 
         
 
