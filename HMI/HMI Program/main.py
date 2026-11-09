@@ -31,7 +31,7 @@ def init():
     global clock, objects
     global screen, width, height
     global ButtonXScale, ButtonYScale, ButtonFontSize, bordWidth
-    global flagArr, convArr, constArr, numSorted, confirmArr
+    global flagArr, convArr, constArr, numSorted, confirmArr, demoArr
     global BG_COLOR, BORDER_COLOR, TEXT_FIELD_COLOR, WHITE, BLACK, RED, NORMAL_COLOR, HOVER_COLOR, PRESS_COLOR
 
     # Initialize Pygame
@@ -59,10 +59,11 @@ def init():
     bordWidth = height/50
 
     #Arrays of bytes
-    flagArr = array.array("b", [0, 1, 0, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, Info, Confirm Flags in array form
+    flagArr = array.array("b", [0, 1, 0, 0, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, Info, Confirm, Demo Flags in array form
     convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
     confirmArr = array.array("b", [0,0]) #Confirm screen flag, left, right buttons
     constArr = array.array("b", [60]) #FPS
+    demoArr = array.array("b", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # first 8 are digital 0 or 1, and last 8 are analog 0 to 3.3
 
     #Conveyor Vars
     numSorted = 0
@@ -220,11 +221,12 @@ def HomeScreen(): #Screen for elements of the home screen
     cameraButton = screenElements.Button("Camera", (int) (0 + ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     conveyorButton = screenElements.Button("Conveyor", (int) (width - ButtonXScale - ButtonXScale/3), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     infoButton = screenElements.Button("Info", (int) (width/2 - ButtonXScale/2), (int) (height - ButtonYScale - ButtonYScale/3), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-
+    demoButton = screenElements.Button("Demo", (int) (width/2 - ButtonXScale/2), (int) (height - 3 * ButtonYScale), ButtonXScale, ButtonYScale, ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     cameraButton.update()
     conveyorButton.update()
     infoButton.update()
+    demoButton.update()
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
@@ -245,9 +247,13 @@ def HomeScreen(): #Screen for elements of the home screen
         if infoButton.handle_event(event):
             flagArr[5] = 1
 
+        if demoButton.handle_event(event):
+            flagArr[7] = 1
+
     cameraButton.draw(screen)
     conveyorButton.draw(screen)
     infoButton.draw(screen)
+    demoButton.draw(screen)
 
     #Update frame buffer
     pygame.display.update()
@@ -490,6 +496,162 @@ def InfoScreen():
     pygame.display.update()
     clock.tick(constArr[0])
 
+def DemoScreen():
+    global flagArr
+    global numSorted
+    global demoArr
+
+    #Draw background elements
+    screen.fill(BG_COLOR)
+
+    #Define text to display
+    font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
+    d1t = font.render(f"{demoArr[0]}", True, BORDER_COLOR); d2t = font.render(f"{demoArr[1]}", True, BORDER_COLOR); d3t = font.render(f"{demoArr[2]}", True, BORDER_COLOR); d4t = font.render(f"{demoArr[3]}", True, BORDER_COLOR);
+    d5t = font.render(f"{demoArr[4]}", True, BORDER_COLOR); d6t = font.render(f"{demoArr[5]}", True, BORDER_COLOR); d7t = font.render(f"{demoArr[6]}", True, BORDER_COLOR); d8t = font.render(f"{demoArr[7]}", True, BORDER_COLOR);
+    a1t = font.render(f"{demoArr[8]/10}", True, BORDER_COLOR); a2t = font.render(f"{demoArr[9]/10}", True, BORDER_COLOR); a3t = font.render(f"{demoArr[10]/10}", True, BORDER_COLOR); a4t = font.render(f"{demoArr[11]/10}", True, BORDER_COLOR);
+    a5t = font.render(f"{demoArr[12]/10}", True, BORDER_COLOR); a6t = font.render(f"{demoArr[13]/10}", True, BORDER_COLOR); a7t = font.render(f"{demoArr[14]/10}", True, BORDER_COLOR); a8t = font.render(f"{demoArr[15]/10}", True, BORDER_COLOR);
+
+    #Draw buttons
+    d1b = screenElements.Button("Digital 1", (int) (0 + 0 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d2b = screenElements.Button("Digital 2", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d3b = screenElements.Button("Digital 3", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d4b = screenElements.Button("Digital 4", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    
+    d5b = screenElements.Button("Digital 5", (int) (0 + 0 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d6b = screenElements.Button("Digital 6", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d7b = screenElements.Button("Digital 7", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d8b = screenElements.Button("Digital 8", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+   
+    a1b = screenElements.Button("Analog 1", (int) (0 + 0 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 1.75 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a2b = screenElements.Button("Analog 2", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 1.75 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a3b = screenElements.Button("Analog 3", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 1.75 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a4b = screenElements.Button("Analog 4", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 1.75 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+   
+    a5b = screenElements.Button("Analog 5", (int) (0 + 0 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a6b = screenElements.Button("Analog 6", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a7b = screenElements.Button("Analog 7", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    a8b = screenElements.Button("Analog 8", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+    #Draw changing text onscreen
+    screen.blit(d1t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - d1t.width/2), (int) (height - 4.5 * ButtonYScale - d1t.height/2)))
+    screen.blit(d2t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - d2t.width/2), (int) (height - 4.5 * ButtonYScale - d2t.height/2)))
+    screen.blit(d3t, ((int) (2 * ButtonXScale + 0.5 * ButtonXScale - d3t.width/2), (int) (height - 4.5 * ButtonYScale - d3t.height/2)))
+    screen.blit(d4t, ((int) (3 * ButtonXScale + 0.5 * ButtonXScale - d4t.width/2), (int) (height - 4.5 * ButtonYScale - d4t.height/2)))
+    screen.blit(d5t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - d5t.width/2), (int) (height - 3.25 * ButtonYScale - d5t.height/2)))
+    screen.blit(d6t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - d6t.width/2), (int) (height - 3.25 * ButtonYScale - d6t.height/2)))
+    screen.blit(d7t, ((int) (2 * ButtonXScale + 0.5 * ButtonXScale - d7t.width/2), (int) (height - 3.25 * ButtonYScale - d7t.height/2)))
+    screen.blit(d8t, ((int) (3 * ButtonXScale + 0.5 * ButtonXScale - d8t.width/2), (int) (height - 3.25 * ButtonYScale - d8t.height/2)))
+    screen.blit(a1t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - a1t.width/2), (int) (height - 2 * ButtonYScale - a1t.height/2)))
+    screen.blit(a2t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - a2t.width/2), (int) (height - 2 * ButtonYScale - a2t.height/2)))
+    screen.blit(a3t, ((int) (2 * ButtonXScale + 0.5 * ButtonXScale - a3t.width/2), (int) (height - 2 * ButtonYScale - a3t.height/2)))
+    screen.blit(a4t, ((int) (3 * ButtonXScale + 0.5 * ButtonXScale - a4t.width/2), (int) (height - 2 * ButtonYScale - a4t.height/2)))
+    screen.blit(a5t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - a5t.width/2), (int) (height - .75 * ButtonYScale - a5t.height/2)))
+    screen.blit(a6t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - a6t.width/2), (int) (height - .75 * ButtonYScale - a6t.height/2)))
+    screen.blit(a7t, ((int) (2 * ButtonXScale + 0.5 * ButtonXScale - a7t.width/2), (int) (height - .75 * ButtonYScale - a7t.height/2)))
+    screen.blit(a8t, ((int) (3 * ButtonXScale + 0.5 * ButtonXScale - a8t.width/2), (int) (height - .75 * ButtonYScale - a8t.height/2)))
+
+    #Update buttons
+    d1b.update(); d2b.update(); d3b.update(); d4b.update(); d5b.update(); d6b.update(); d7b.update(); d8b.update()
+    a1b.update(); a2b.update(); a3b.update(); a4b.update(); a5b.update(); a6b.update(); a7b.update(); a8b.update()
+
+    #Event handlers for all of the buttons
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+        #Digital buttons will flip-flop between 1 and 0
+        if d1b.handle_event(event):
+            demoArr[0] = not demoArr[0]
+
+        if d2b.handle_event(event):
+            demoArr[1] = not demoArr[1] 
+
+        if d3b.handle_event(event):
+            demoArr[2] = not demoArr[2]
+
+        if d4b.handle_event(event):
+            demoArr[3] = not demoArr[3]
+
+        if d5b.handle_event(event):
+            demoArr[4] = not demoArr[4]
+
+        if d6b.handle_event(event):
+            demoArr[5] = not demoArr[5]
+
+        if d7b.handle_event(event):
+            demoArr[6] = not demoArr[6]
+
+        if d8b.handle_event(event):
+            demoArr[7] = not demoArr[7]
+
+        #Analog buttons will increment by 0.1 from 0 to 33, and then loop. When sending or interpreting, make sure to divide by 10.
+        # encountered a float modification error when using decimals to loop.
+        if a1b.handle_event(event):
+            if demoArr[8] < 33:
+                demoArr[8] += 1
+            else:
+                demoArr[8] = 0
+
+        if a2b.handle_event(event):
+            if demoArr[9] < 33:
+                demoArr[9] += 1
+            else:
+                demoArr[9] = 0
+
+        if a3b.handle_event(event):
+            if demoArr[10] < 33:
+                demoArr[10] += 1
+            else:
+                demoArr[10] = 0
+
+        if a4b.handle_event(event):
+            if demoArr[11] < 33:
+                demoArr[11] += 1
+            else:
+                demoArr[11] = 0
+
+        if a5b.handle_event(event):
+            if demoArr[12] < 33:
+                demoArr[12] += 1
+            else:
+                demoArr[12] = 0
+
+        if a6b.handle_event(event):
+            if demoArr[13] < 33:
+                demoArr[13] += 1
+            else:
+                demoArr[13] = 0
+
+        if a7b.handle_event(event):
+            if demoArr[14] < 33:
+                demoArr[14] += 1
+            else:
+                demoArr[14] = 0
+
+        if a8b.handle_event(event):
+            if demoArr[15] < 33:
+                demoArr[15] += 1
+            else:
+                demoArr[15] = 0
+
+        #Home method
+        if d1b.handle_event(event) and a1b.handle_event(event):
+            flagArr[7] = 0
+
+    #Draw the buttons to the screen
+    d1b.draw(screen); d2b.draw(screen); d3b.draw(screen); d4b.draw(screen); d5b.draw(screen); d6b.draw(screen); d7b.draw(screen); d8b.draw(screen)
+    a1b.draw(screen); a2b.draw(screen); a3b.draw(screen); a4b.draw(screen); a5b.draw(screen); a6b.draw(screen); a7b.draw(screen); a8b.draw(screen)
+
+    #Update frame buffer
+    pygame.display.update()
+    clock.tick(constArr[0])
+
 #End of init, start rendering
 initTime = time.perf_counter()
 if timeDebug:
@@ -537,6 +699,11 @@ while True:
     #Info screen rendering
     if(flagArr[5]):
         InfoScreen()
+        continue
+
+    #Demo screen rendering
+    if(flagArr[7]):
+        DemoScreen()
         continue
 
     #Home screen rendering
