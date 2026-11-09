@@ -532,6 +532,8 @@ def DemoScreen():
     a7b = screenElements.Button("Analog 7", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
     a8b = screenElements.Button("Analog 8", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - .5 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
+    homeButton = screenElements.Button("Home", (int) (width - 3*ButtonXScale), (int) (height - 5*ButtonYScale), 2*ButtonXScale, ButtonYScale/4, (int) (ButtonFontSize/2), WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
     #Draw changing text onscreen
     screen.blit(d1t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - d1t.width/2), (int) (height - 4.5 * ButtonYScale - d1t.height/2)))
     screen.blit(d2t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - d2t.width/2), (int) (height - 4.5 * ButtonYScale - d2t.height/2)))
@@ -553,6 +555,7 @@ def DemoScreen():
     #Update buttons
     d1b.update(); d2b.update(); d3b.update(); d4b.update(); d5b.update(); d6b.update(); d7b.update(); d8b.update()
     a1b.update(); a2b.update(); a3b.update(); a4b.update(); a5b.update(); a6b.update(); a7b.update(); a8b.update()
+    homeButton.update()
 
     #Event handlers for all of the buttons
     for event in pygame.event.get():
@@ -641,13 +644,14 @@ def DemoScreen():
                 demoArr[15] = 0
 
         #Home method
-        if d1b.handle_event(event) and a1b.handle_event(event):
+        if homeButton.handle_event(event):
             flagArr[7] = 0
 
     #Draw the buttons to the screen
     d1b.draw(screen); d2b.draw(screen); d3b.draw(screen); d4b.draw(screen); d5b.draw(screen); d6b.draw(screen); d7b.draw(screen); d8b.draw(screen)
     a1b.draw(screen); a2b.draw(screen); a3b.draw(screen); a4b.draw(screen); a5b.draw(screen); a6b.draw(screen); a7b.draw(screen); a8b.draw(screen)
-
+    homeButton.draw(screen)
+    
     #Update frame buffer
     pygame.display.update()
     clock.tick(constArr[0])
