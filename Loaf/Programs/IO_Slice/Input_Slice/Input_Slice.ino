@@ -14,6 +14,7 @@
 ACAN2515 can(CANCS, SPI, CANINT);
 CANMessage txMSG;
 CANMessage rxMSG;
+CANMessage EMSG;
 CANMessage workMSG;
 
 //Can Frame Vars
@@ -44,6 +45,7 @@ uint32_t messageCounter = 0;
 //Core vars
 volatile char core0Setup = 0;
 volatile char core1Setup = 0;
+volatile char STOPTHISMADNESS = 0;
 
 //ADC Configuration
 #define ADCCS 7
@@ -51,6 +53,7 @@ volatile char core1Setup = 0;
 MCP3208 externADC;
 
 //Digital pin setup
+#define ESTOP 5
 #define numDigital 8
 const uint8_t digiPins[numDigital] {26, 22, 21, 20, 19, 18, 17, 16}; //DIO0, DIO1, DIO2, DIO3, DIO4, DIO5, DIO6, DIO7
 
@@ -209,6 +212,8 @@ void setup() {
 }
 
 void setup1(){
+  pinMode(ESTOP, INPUT);
+
   for(char i = 0; i < numDigital; i++){
     pinMode(digiPins[i], INPUT);
   }
@@ -219,6 +224,14 @@ void setup1(){
     rxFlagBuf[i] = 0;
   }
 
+  EMSG.id = 0x0;
+  EMSG.len = 8;
+
+  for(char i = 0; i < 8; i++){
+    EMSG.data[i] = 0b11111111;
+  }
+
+
   //Capture to make sure the cores don't progress too out of sync
   core1Setup = 1;
   while(!core0Setup){}
@@ -226,12 +239,18 @@ void setup1(){
 
 void loop() {
   while(true){
+  while(STOPTHISMADNESS){
+    can.tryToSend(EMSG);
+    Serial.println("ESTOP TRIGGERED!!!!!!!!!");
+    delay(100);
+  }
   //Recieve the CAN message
   if (can.available()) {
     can.receive(rxMSG);
     //Yoink ID and data size
     canID = rxMSG.id;
     dataLen = rxMSG.len;
+    Serial.println("]");
 
     //Skip this frame if it isn't what we want
     if(canID != canRXID && dataLen != 8){continue;}
@@ -288,6 +307,8 @@ void loop() {
 
 void loop1(){
   while(true){
+  STOPTHISMADNESS = digitalRead(ESTOP);
+  while(STOPTHISMADNESS){}
 
   for(char i = 0; i < bufSize; i++){
 
@@ -297,43 +318,32 @@ void loop1(){
       //Decode buffer entry
       canDecode(rxBuffer[i].data);
 
-      //Read stuff
-      switch(modeFlag){
-          //Analog Case
-          case 0:
-            dataSeg = readAnalog(pinNum);
-          break;
+      if(modeIO == 0){
+        //Read stuff
+        switch(modeFlag){
+            //Analog Case
+            case 0:
+            break;
 
-          //Digital Case
-          case 1:
-            dataSeg = readDigital(pinNum);
-          break;
+            //Digital Case
+            case 1:
+            break;
 
-          //Bulk Digital Case
-          case 2:
-            dataSeg = readManyDigital(bulkDigi);
-          break;
+            //Bulk Digital Case
+            case 2:
+            break;
 
-          //PWM Case
-          case 3:
-            readPWM(pinNum);
-          break;
-        }
-
-      txBuffer[i] = canEncode(bulkDigi, pwmDuty, dataSeg);
-      txFlagBuf[i] = 1;
-      rxFlagBuf[i] = 0;
+            //PWM Case
+            case 3:
+            break;
+          }
+        txBuffer[i] = canEncode(bulkDigi, pwmDuty, dataSeg);
+        txFlagBuf[i] = 1;
+        rxFlagBuf[i] = 0;
+      }else{
+        rxFlagBuf[i] = 0;
+      }
     }
   }
   
 }}
-
-
-
-
-
-
-
-
-
-
