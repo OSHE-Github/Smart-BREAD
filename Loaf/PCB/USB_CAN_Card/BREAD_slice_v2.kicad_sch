@@ -5796,7 +5796,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "03b087f9-542b-467e-9839-d2374322af2a")
-		(property "Reference" "P2"
+		(property "Reference" "P1"
 			(at 55.88 81.28 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5867,7 +5867,7 @@
 		(instances
 			(project "BREAD_slice_v2"
 				(path "/7f913798-a7fb-4519-b930-d05e163d3032"
-					(reference "P2")
+					(reference "P1")
 					(unit 1)
 				)
 			)
@@ -8442,7 +8442,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "a39eca35-f286-4317-ac68-e8770f5505b3")
-		(property "Reference" "R4"
+		(property "Reference" "R1"
 			(at 114.3 35.56 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8504,7 +8504,7 @@
 		(instances
 			(project "BREAD_slice_v2"
 				(path "/7f913798-a7fb-4519-b930-d05e163d3032"
-					(reference "R4")
+					(reference "R1")
 					(unit 1)
 				)
 			)

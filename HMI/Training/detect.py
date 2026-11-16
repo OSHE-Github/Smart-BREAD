@@ -3,7 +3,7 @@ import numpy as np
 import onnxruntime as ort
 
 argCount = len(sys.argv) - 1
-providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
+providers = ["AzureExecutionProvider", "CPUExecutionProvider"]
 models = array.array[argCount]
 thresh = 70.0
 

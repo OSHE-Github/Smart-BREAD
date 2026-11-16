@@ -183,6 +183,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -194,6 +195,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -205,6 +207,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -538,8 +541,8 @@
     "meta": {
       "version": 5
     },
-    "net_colors": null,
-    "netclass_assignments": null,
+    "net_colors": {},
+    "netclass_assignments": {},
     "netclass_patterns": []
   },
   "pcbnew": {
@@ -683,7 +686,7 @@
         "uuid": "38f449ac-36af-429e-8a72-37afdf643ee3"
       }
     ],
-    "used_designators": "#PWR1-51,A1-6,C1-4,H1-4,SW1-4,RN1-3,J1-11,R1-12",
+    "used_designators": "#PWR1-63,A1-6,C1-6,H1-4,J1-11,R1-12,RN1-3,SW1-4,U1",
     "variants": []
   },
   "sheets": [
