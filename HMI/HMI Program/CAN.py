@@ -94,51 +94,42 @@ IO reads message (whatever was recieved), converts to output and then sets pin a
 # read message -> convert to output -> set pins based on output
 
 # Write to a specific pin or range of pins from the output slice
-def write(address, IO, mode, pin, bulkPins):
-
+def write(address, mode, pin, bulkPins, data, duty):
 
     #Error checking and display
-    if IO > 3 or IO < 0:
-        print("ERORR: Invalid IO bits set!")
-        return -1
-
     if mode > 3 or mode < 0:
         print("ERORR: Invalid mode bits set!")
         return -1
 
-    if pin > 15 or pin < 0:
+    if (pin > 15 or pin < 0):
         print("ERROR: Invalid pin bits set!")
         return -1
 
-    match address:
-        case 0x1A3:
-            if IO == 1:
-                pin = 0
-            else:
-                pin = 1
-        case 0x1A4:
-            if IO == 1:
-                pin = 0
-            else:
-                pin = 1
-        case _:
-            print("ERROR: Unknown address!")
-            return -1
+    if mode == 0 and data > 4095:
+        print("ERROR: Invalid data segment for analog write!")
+        return -1
+
+    if duty > 255:
+        print("ERROR: Invalid duty cycle (0-255)")
+        return -1
+
+    #Byte setup
+    txBuf[0] = 0
+
+    if mode != 2:
+        txBuf[0] = pin + (mode << 4) + (1 << 6)
+
 
     if mode == 2:
-        match address:
-            case 0x1A3:
-                if IO == 1:
-                    bulkPins = 0
-                else:
-                    bulkPins = 1
-            case 0x1A4:
-                if IO == 1:
-                    bulkPins = 0
-                else:
-                    bulkPins = 1
-            case _:
-                print("ERROR: Unknown address!")
-                return -1
+        txBuf[0] = (mode << 4) + (1 << 6)
+        txBuf[3] = bulkPins & 0b0000000011111111
+        txBuf[2] = (bulkPins & 0b1111111100000000) >> 8
+    else:
+        txBuf[2] = 0; txBuf[3] = 0;
 
+    #Set unnessecary bytes to zero
+    txBuf[1] = 0; txBuf[4] = duty; txBuf[5] = (data & 0b111111110000000000000000) >> 16; txBuf[6] = (data & 0b000000001111111100000000) >> 8; txBuf[7] = (data & 0b000000000000000011111111);
+    #print(bin(txBuf[0]))
+    canBus.send(address, txBuf, extended = True)
 
+    return 1

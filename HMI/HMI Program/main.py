@@ -63,7 +63,7 @@ def init():
     convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
     confirmArr = array.array("b", [0,0]) #Confirm screen flag, left, right buttons
     constArr = array.array("b", [60]) #FPS
-    demoArr = array.array("b", [0, 0, 0, 0, 0, 0]) # d0+ (0), d0- (1), d1 (2), d2 (3), blkdb (4), analog (5)
+    demoArr = array.array("b", [0, 0, 0, 0, 0]) # d0+/- (0), d1 (1), d2 (2), blkdb (3), analog (4)
 
     #Conveyor Vars
     numSorted = 0
@@ -506,34 +506,31 @@ def DemoScreen():
 
     #Define text to display
     font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
-    d0tPlus = font.render(f"{demoArr[0]}", True, BORDER_COLOR)
-    d0tMinus = font.render(f"{demoArr[1]}", True, BORDER_COLOR)
-    d1t = font.render(f"{demoArr[2]}", True, BORDER_COLOR)
-    d2t = font.render(f"{demoArr[3]}", True, BORDER_COLOR)
-    blkdt = font.render(f"{demoArr[4]}", True, BORDER_COLOR)
-
-    analogText = font.render(f"{demoArr[5]/10}", True, BORDER_COLOR)
+    d0t = font.render(f"{demoArr[0]}", True, BORDER_COLOR)
+    d1t = font.render(f"{demoArr[1]}", True, BORDER_COLOR)
+    d2t = font.render(f"{demoArr[2]}", True, BORDER_COLOR)
+    blkdt = font.render(f"{demoArr[3]}, {demoArr[3]}, {demoArr[3]}, {demoArr[3]}", True, BORDER_COLOR)
+    analogText = font.render(f"{demoArr[4]/10}", True, BORDER_COLOR)
 
     #Draw buttons
 # digitalsPins 1 and 2 need a toggle button (whats happening already), digital 0 needs the speed +/-, want a blkdigital write for 7,6,5,4, 
 # analog have a button write out 8 different voltages 0 to 3.3 (store between 0 and 495). Replace current analog buttons with one that does all at once.
 # 
-    d0bPlus = screenElements.Button("Digital 0 +", (int) (0  + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d0bMinus = screenElements.Button("Digital 0 -", (int) (0 + 1 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d1b = screenElements.Button("Digital 1", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d2b = screenElements.Button("Digital 2", (int) (0 + 3 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 4.25* ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    blkdb = screenElements.Button("Bulk Digital", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 3.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    analogButton = screenElements.Button("Analog", (int) (0 + 2 * ButtonXScale + 0.125 * ButtonXScale), (int) (height - 2.25 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.5), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d0bPlus = screenElements.Button("Digital 0 +", (int) (0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d0bMinus = screenElements.Button("Digital 0 -", (int) (1.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d1b = screenElements.Button("Digital 1", (int) (2.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    d2b = screenElements.Button("Digital 2", (int) (3.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    blkdb = screenElements.Button("Bulk Digital", (int) (width/2 - ButtonXScale/2), (int) (height -  2.5 * ButtonYScale), ButtonXScale, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    analogButton = screenElements.Button("Analog", (int) (width/2 - ButtonXScale/2), (int) (height - 1 * ButtonYScale), ButtonXScale, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
-    homeButton = screenElements.Button("Home", (int) (width - 3*ButtonXScale), (int) (height - 5*ButtonYScale), 2*ButtonXScale, ButtonYScale/4, (int) (ButtonFontSize/2), WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    homeButton = screenElements.Button("Home", (int) (width/2 - ButtonXScale), (int) (height - 5 * ButtonYScale), 2*ButtonXScale, ButtonYScale/4, (int) (ButtonFontSize/2), WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     #Draw changing text onscreen
-    screen.blit(d0tPlus, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - d0tPlus.width/2), (int) (height - 5.5 * ButtonYScale - d0tPlus.height/2)))
-    screen.blit(d0tMinus, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - d0tMinus.width/2), (int) (height - 5.5 * ButtonYScale - d0tMinus.height/2)))
-    screen.blit(d1t, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - d1t.width/2), (int) (height - 4.5 * ButtonYScale - d1t.height/2)))
-    screen.blit(d2t, ((int) (1 * ButtonXScale + 0.5 * ButtonXScale - d2t.width/2), (int) (height - 4.5 * ButtonYScale - d2t.height/2)))
-    screen.blit(blkdt, ((int) (2 * ButtonXScale + 0.5 * ButtonXScale - blkdt.width/2), (int) (height - 4.5 * ButtonYScale - blkdt.height/2)))
-    screen.blit(analogText, ((int) (0 * ButtonXScale + 0.5 * ButtonXScale - analogText.width/2), (int) (height - 3.25 * ButtonYScale - analogText.height/2)))
+    screen.blit(d0t, ((int) ((1 * ButtonXScale) - d0t.width/2), (int) (height - 4.25 * ButtonYScale - d0t.height/2)))
+    screen.blit(d1t, ((int) ((2.5 * ButtonXScale) - d1t.width/2), (int) (height - 4.25 * ButtonYScale - d1t.height/2)))
+    screen.blit(d2t, ((int) ((3.5 * ButtonXScale) - d2t.width/2), (int) (height - 4.25 * ButtonYScale - d2t.height/2)))
+    screen.blit(blkdt, ((int) (width/2 - blkdt.width/2), (int) (height - 2.75 * ButtonYScale - blkdt.height/2)))
+    screen.blit(analogText, ((int) (width/2 - analogText.width/2), (int) (height - 1.25 * ButtonYScale - analogText.height/2)))
 
     #Update buttons
     d0bPlus.update(); d0bMinus.update(); d1b.update(); d2b.update(); blkdb.update(); analogButton.update();
@@ -553,32 +550,27 @@ def DemoScreen():
         # Digital 0 increment speed up and down (copied from conveyor screen)
         if d0bPlus.handle_event(event):
             demoArr[0] = min(demoArr[0] + 1, 100)
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
 
         if d0bMinus.handle_event(event):
-            demoArr[1] = max(demoArr[1] - 1, 0)
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
+            demoArr[0] = max(demoArr[0] - 1, 0)
 
         # Digital 1 and 2 toggle between 1 and 0
         if d1b.handle_event(event):
-            demoArr[2] = not demoArr[2]
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
+            demoArr[1] = not demoArr[1]
 
         if d2b.handle_event(event):
-            demoArr[3] = not demoArr[3] 
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
+            demoArr[2] = not demoArr[2] 
 
         # blkdigital toggle for pins 4,5,6,7)
         if blkdb.handle_event(event):
-            demoArr[4] = not demoArr[4]
-            print(CAN.read(0x1A3, 0, 1, 0, 0))
+            demoArr[3] = not demoArr[3]
 
         # Analog button writes 8 different voltages (0 to 3.3V, stored 0 to 495) to the analog pin, 
         if analogButton.handle_event(event):
-            if demoArr[5] < 33:
-                demoArr[5] += 1
+            if demoArr[4] < 33:
+                demoArr[4] += 1
             else:
-                demoArr[5] = 0
+                demoArr[4] = 0
 
         #Home method
         if homeButton.handle_event(event):
