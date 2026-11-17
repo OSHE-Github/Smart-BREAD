@@ -350,9 +350,13 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
         if addSpeedButton.handle_event(event):
             convArr[0] = min(convArr[0] + 1, 100)
+            CAN.write(0x1A3, 1, 0, 0, convArr[0], int(255.0*(int(convArr[0])/100.0)))
+
 
         if minusSpeedButton.handle_event(event):
             convArr[0] = max(convArr[0] - 1, 0)
+            CAN.write(0x1A3, 1, 0, 0, convArr[0], int(255.0*(int(convArr[0])/100.0)))
+
 
         if leftDirButton.handle_event(event):
             if convArr[2] == 1:
@@ -550,27 +554,38 @@ def DemoScreen():
         # Digital 0 increment speed up and down (copied from conveyor screen)
         if d0bPlus.handle_event(event):
             demoArr[0] = min(demoArr[0] + 1, 100)
+            CAN.write(0x1A3, 1, 0, 0, demoArr[0], int(255.0*(int(demoArr[0])/100.0)))
 
         if d0bMinus.handle_event(event):
             demoArr[0] = max(demoArr[0] - 1, 0)
+            CAN.write(0x1A3, 1, 0, 0, demoArr[0], int(255.0*(int(demoArr[0])/100.0)))
 
         # Digital 1 and 2 toggle between 1 and 0
         if d1b.handle_event(event):
             demoArr[1] = not demoArr[1]
+            CAN.write(0x1A3, 1, 1, 0, demoArr[1], 0)
+
 
         if d2b.handle_event(event):
             demoArr[2] = not demoArr[2] 
+            CAN.write(0x1A3, 1, 2, 0, demoArr[2], 0)
 
         # blkdigital toggle for pins 4,5,6,7)
         if blkdb.handle_event(event):
             demoArr[3] = not demoArr[3]
+            CAN.write(0x1A3, 2, 3, 4, demoArr[3], 0)
+
 
         # Analog button writes 8 different voltages (0 to 3.3V, stored 0 to 495) to the analog pin, 
         if analogButton.handle_event(event):
-            if demoArr[4] < 33:
-                demoArr[4] += 1
-            else:
-                demoArr[4] = 0
+            CAN.write(0x1A3, 2, 8, 0, 61, 0)
+            CAN.write(0x1A3, 2, 8, 0, 122, 0)
+            CAN.write(0x1A3, 2, 8, 0, 183, 0)
+            CAN.write(0x1A3, 2, 8, 0, 244, 0)
+            CAN.write(0x1A3, 2, 8, 0, 305, 0)
+            CAN.write(0x1A3, 2, 8, 0, 366, 0)
+            CAN.write(0x1A3, 2, 8, 0, 427, 0)
+
 
         #Home method
         if homeButton.handle_event(event):
