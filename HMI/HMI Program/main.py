@@ -573,18 +573,18 @@ def DemoScreen():
         # blkdigital toggle for pins 4,5,6,7)
         if blkdb.handle_event(event):
             demoArr[3] = not demoArr[3]
-            CAN.write(0x1A3, 2, 3, 4, demoArr[3], 0)
+            CAN.write(0x1A3, 2, 3, 0b0000000000111 , 0, 0) #data is zeroes until you get the thing you want whatever that means, 0) #that sort of stuff for pins)
 
 
         # Analog button writes 8 different voltages (0 to 3.3V, stored 0 to 495) to the analog pin, 
         if analogButton.handle_event(event):
-            CAN.write(0x1A3, 2, 8, 0, 61, 0)
-            CAN.write(0x1A3, 2, 8, 0, 122, 0)
-            CAN.write(0x1A3, 2, 8, 0, 183, 0)
-            CAN.write(0x1A3, 2, 8, 0, 244, 0)
-            CAN.write(0x1A3, 2, 8, 0, 305, 0)
-            CAN.write(0x1A3, 2, 8, 0, 366, 0)
-            CAN.write(0x1A3, 2, 8, 0, 427, 0)
+            CAN.write(0x1A3, 2, 8, 0, 4, 0)
+            CAN.write(0x1A3, 2, 8, 0, 8, 0)
+            CAN.write(0x1A3, 2, 8, 0, 12, 0)
+            CAN.write(0x1A3, 2, 8, 0, 16, 0)
+            CAN.write(0x1A3, 2, 8, 0, 20, 0)
+            CAN.write(0x1A3, 2, 8, 0, 24, 0)
+            CAN.write(0x1A3, 2, 8, 0, 28, 0)
 
 
         #Home method

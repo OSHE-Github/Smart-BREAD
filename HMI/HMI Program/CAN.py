@@ -7,7 +7,7 @@ from mcp2515 import MCP2515, open_first_mcp2210
 CS_PIN = 3
 INT_PIN = 4
 OSC_HZ = 16_000_000
-BITRATE = 1_000_000        # was 1 Mbps ("whichever worked") in mainLoaf.py
+BITRATE = 500_000        # was 1 Mbps ("whichever worked") in mainLoaf.py
 CONVEYOR_ID = 0x12         # extended ID used by the old sendCANMessage()
 txBuf = array.array("b", [0,0,0,0,0,0,0,0])
 
