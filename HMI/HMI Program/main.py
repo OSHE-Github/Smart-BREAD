@@ -39,7 +39,7 @@ def init():
     global clock, objects
     global screen, width, height
     global ButtonXScale, ButtonYScale, ButtonFontSize, bordWidth
-    global flagArr, convArr, constArr, numSorted, confirmArr, demoArr
+    global flagArr, convArr, constArr, numSorted, confirmArr
     global BG_COLOR, BORDER_COLOR, TEXT_FIELD_COLOR, WHITE, BLACK, RED, NORMAL_COLOR, HOVER_COLOR, PRESS_COLOR
 
     # Initialize Pygame
@@ -76,7 +76,6 @@ def init():
     convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
     confirmArr = array.array("b", [0,0]) #Confirm screen flag, left, right buttons
     constArr = array.array("b", [60]) #FPS
-    demoArr = array.array("b", [0, 0, 0, 0, 0]) # d0+/- (0), d1 (1), d2 (2), blkdb (3), analog (4)
 
     #Conveyor Vars
     numSorted = 0
@@ -375,13 +374,9 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
 
         if addSpeedButton.handle_event(event):
             convArr[0] = min(convArr[0] + 1, 100)
-            CAN.write(0x1A3, 1, 0, 0, convArr[0], int(255.0*(int(convArr[0])/100.0)))
-
 
         if minusSpeedButton.handle_event(event):
             convArr[0] = max(convArr[0] - 1, 0)
-            CAN.write(0x1A3, 1, 0, 0, convArr[0], int(255.0*(int(convArr[0])/100.0)))
-
 
         if leftDirButton.handle_event(event):
             if convArr[2] == 1:
@@ -392,7 +387,7 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
                 if convArr[2] == 0:
                     confirmArr[1] = 1
                     flagArr[6] = 1
-            #print(CAN.read(0x1A3, 0, 1, 0, 0))
+            #print(CAN.Read.analog(0x1A3, 0, 1, 0, 0))
 
         if homeButton.handle_event(event):
             flagArr[3] = 0
@@ -522,42 +517,36 @@ def InfoScreen():
 def DemoScreen():
     global flagArr
     global numSorted
-    global demoArr
+    demoArray = array.array("b", [0, 0, 0, 0]) # analog read, analog write, digital read, pwm read
+    analogValue = 1
 
     #Draw background elements
     screen.fill(BG_COLOR)
 
     #Define text to display
     font = pygame.font.SysFont('Arial', (int) (ButtonFontSize/2))
-    d0t = font.render(f"{demoArr[0]}", True, BORDER_COLOR)
-    d1t = font.render(f"{demoArr[1]}", True, BORDER_COLOR)
-    d2t = font.render(f"{demoArr[2]}", True, BORDER_COLOR)
-    blkdt = font.render(f"{demoArr[3]}, {demoArr[3]}, {demoArr[3]}, {demoArr[3]}", True, BORDER_COLOR)
-    analogText = font.render(f"{demoArr[4]/10}", True, BORDER_COLOR)
+    analogReadText = font.render(f"{demoArray[0]}", True, BORDER_COLOR)
+    analogWriteText = font.render(f"{demoArray[1]}", True, BORDER_COLOR)
+    digitalReadText = font.render(f"{demoArray[2]}", True, BORDER_COLOR)
+    pwmReadText = font.render(f"{demoArray[3]}", True, BORDER_COLOR)
 
-    #Draw buttons
-# digitalsPins 1 and 2 need a toggle button (whats happening already), digital 0 needs the speed +/-, want a blkdigital write for 7,6,5,4, 
-# analog have a button write out 8 different voltages 0 to 3.3 (store between 0 and 495). Replace current analog buttons with one that does all at once.
-# 
-    d0bPlus = screenElements.Button("Digital 0 +", (int) (0.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d0bMinus = screenElements.Button("Digital 0 -", (int) (1.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d1b = screenElements.Button("Digital 1", (int) (2.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    d2b = screenElements.Button("Digital 2", (int) (3.125 * ButtonXScale), (int) (height - 4 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    blkdb = screenElements.Button("Bulk Digital", (int) (width/2 - ButtonXScale/2), (int) (height -  2.5 * ButtonYScale), ButtonXScale, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
-    analogButton = screenElements.Button("Analog", (int) (width/2 - ButtonXScale/2), (int) (height - 1 * ButtonYScale), ButtonXScale, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    #Draw buttons# 
+    analogReadButton = screenElements.Button("Read Analog", (int) (1*ButtonXScale/3), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    analogWriteButton = screenElements.Button("Write Analog", (int) (4*ButtonXScale/3), (int) (height - 3 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+
+    digitalReadButton = screenElements.Button("Read Digital", (int) (1*ButtonXScale/3), (int) (height - 1 * ButtonYScale), ButtonXScale * 0.75, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
+    pwmReadButton = screenElements.Button("Read PWM", (int) (4*ButtonXScale/3), (int) (height -  1 * ButtonYScale), ButtonXScale, (int) (ButtonYScale*0.66), ButtonFontSize, WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     homeButton = screenElements.Button("Home", (int) (width/2 - ButtonXScale), (int) (height - 5 * ButtonYScale), 2*ButtonXScale, ButtonYScale/4, (int) (ButtonFontSize/2), WHITE, NORMAL_COLOR, PRESS_COLOR, HOVER_COLOR)
 
     #Draw changing text onscreen
-    screen.blit(d0t, ((int) ((1 * ButtonXScale) - d0t.width/2), (int) (height - 4.25 * ButtonYScale - d0t.height/2)))
-    screen.blit(d1t, ((int) ((2.5 * ButtonXScale) - d1t.width/2), (int) (height - 4.25 * ButtonYScale - d1t.height/2)))
-    screen.blit(d2t, ((int) ((3.5 * ButtonXScale) - d2t.width/2), (int) (height - 4.25 * ButtonYScale - d2t.height/2)))
-    screen.blit(blkdt, ((int) (width/2 - blkdt.width/2), (int) (height - 2.75 * ButtonYScale - blkdt.height/2)))
-    screen.blit(analogText, ((int) (width/2 - analogText.width/2), (int) (height - 1.25 * ButtonYScale - analogText.height/2)))
+    screen.blit(analogReadText, ((int) ((1*ButtonXScale/3) - analogReadText.width/2), (int) (height - 4 * ButtonYScale - analogReadText.height/2)))
+    screen.blit(analogWriteText, ((int) ((4*ButtonXScale/3) - analogWriteText.width/2), (int) (height - 4 * ButtonYScale - analogWriteText.height/2)))
+    screen.blit(digitalReadText, ((int) ((1*ButtonXScale/3) - digitalReadText.width/2), (int) (height - 2 * ButtonYScale - digitalReadText.height/2)))
+    screen.blit(pwmReadText, ((int) ((4*ButtonXScale/3) - pwmReadText.width/2), (int) (height - 2 * ButtonYScale - pwmReadText.height/2)))
 
     #Update buttons
-    d0bPlus.update(); d0bMinus.update(); d1b.update(); d2b.update(); blkdb.update(); analogButton.update();
-    homeButton.update()
+    analogReadButton.update(); analogWriteButton.update(); digitalReadButton.update(); pwmReadButton.update(); homeButton.update()
 
     #Event handlers for all of the buttons
     for event in pygame.event.get():
@@ -568,40 +557,20 @@ def DemoScreen():
             if event.key == pygame.K_ESCAPE:
                 shutdown()
 
-        # Digital 0 increment speed up and down (copied from conveyor screen)
-        if d0bPlus.handle_event(event):
-            demoArr[0] = min(demoArr[0] + 1, 100)
-            CAN.write(0x1A3, 1, 0, 0, demoArr[0], int(255.0*(int(demoArr[0])/100.0)))
+        if analogReadButton.handle_event(event):
+            CAN.Read.analog(0x1A3, 0)
 
-        if d0bMinus.handle_event(event):
-            demoArr[0] = max(demoArr[0] - 1, 0)
-            CAN.write(0x1A3, 1, 0, 0, demoArr[0], int(255.0*(int(demoArr[0])/100.0)))
+        if analogWriteButton.handle_event(event):
+            CAN.Write.analog(0x1A3, 0, analogValue)
 
-        # Digital 1 and 2 toggle between 1 and 0
-        if d1b.handle_event(event):
-            demoArr[1] = not demoArr[1]
-            CAN.write(0x1A3, 1, 1, 0, demoArr[1], 0)
+        if digitalReadButton.handle_event(event):
+            CAN.Read.digital(0x1A3, 0)
 
+        if pwmReadButton.handle_event(event):
+            CAN.Read.pwm(0x1A3, 1, 0)
 
-        if d2b.handle_event(event):
-            demoArr[2] = not demoArr[2] 
-            CAN.write(0x1A3, 1, 2, 0, demoArr[2], 0)
-
-        # blkdigital toggle for pins 4,5,6,7)
-        if blkdb.handle_event(event):
-            demoArr[3] = not demoArr[3]
-            CAN.write(0x1A3, 2, 3, 0b0000000000111 , 0, 0) #data is zeroes until you get the thing you want whatever that means, 0) #that sort of stuff for pins)
-
-
-        # Analog button writes 8 different voltages (0 to 3.3V, stored 0 to 495) to the analog pin, 
-        if analogButton.handle_event(event):
-            CAN.write(0x1A3, 2, 8, 0, 4, 0)
-            CAN.write(0x1A3, 2, 8, 0, 8, 0)
-            CAN.write(0x1A3, 2, 8, 0, 12, 0)
-            CAN.write(0x1A3, 2, 8, 0, 16, 0)
-            CAN.write(0x1A3, 2, 8, 0, 20, 0)
-            CAN.write(0x1A3, 2, 8, 0, 24, 0)
-            CAN.write(0x1A3, 2, 8, 0, 28, 0)
+        #button for each one Analog read and write, digital read, PWM read (blkdigital if needed, but not now)
+        #feed analog write into analog read.
 
 
         #Home method
@@ -609,7 +578,10 @@ def DemoScreen():
             flagArr[7] = 0
 
     #Draw the buttons to the screen
-    d0bPlus.draw(screen); d0bMinus.draw(screen); d1b.draw(screen); d2b.draw(screen); blkdb.draw(screen); analogButton.draw(screen)
+    analogReadButton.draw(screen)
+    analogWriteButton.draw(screen)
+    digitalReadButton.draw(screen)
+    pwmReadButton.draw(screen)
     homeButton.draw(screen)
     
     #Update frame buffer
