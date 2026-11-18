@@ -1,4 +1,4 @@
-import sys, time, array, cv2, numpy, threading
+import sys, time, array, cv2, numpy, threading, detect
 from tkinter import font
 import pygame, gif_pygame
 import os, psutil
@@ -15,6 +15,14 @@ if timeDebug:
 #Enable threading
 multiThread = 0;
 threadLiving = array.array("b", [0,0,0,0])
+
+#Sorting vars
+sort = array.array("b", [0,0,0])
+sortMap = array.array("b", [4, 5, 6])
+heyimsortinere = 0
+sortStartTime = 0
+
+modelPath = ["models/MergedModelFP16.onnx"]
 
 #Init memory monitor
 memDebug = 1;
@@ -37,6 +45,11 @@ def init():
     # Initialize Pygame
     pygame.init()
     CAN.init()
+    CAN.Raw.write(0x1A3, 1, 1, 0, 0, 0)
+    CAN.Raw.write(0x1A3, 1, 2, 0, 1, 0)
+    CAN.Write.pwm(0x1A3, 0, 5000, 128)
+    for i in range(3):
+        CAN.Raw.write(0x1A3, 1, sortMap[i], 0, 0, 0)
 
     #Screen Vars
     clock = pygame.time.Clock()
@@ -59,7 +72,7 @@ def init():
     bordWidth = height/50
 
     #Arrays of bytes
-    flagArr = array.array("b", [0, 1, 0, 0, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, Info, Confirm, Demo Flags in array form
+    flagArr = array.array("b", [0, 1, 0, 0, 0, 0, 0, 0, 0]) #Boot, Home, Cam, Conveyor, Fault, Info, Confirm, Demo, and Detector init Flags in array form
     convArr = array.array("b", [0, 0, 0]) #Speed, Measured Speed, Direction
     confirmArr = array.array("b", [0,0]) #Confirm screen flag, left, right buttons
     constArr = array.array("b", [60]) #FPS
@@ -85,20 +98,36 @@ def init():
 
 def camInit():
     #Global var definitions
-    global cam
+    global cam, ret, frame
 
     #Camera setup
-    cam = cv2.VideoCapture(0)
-    if not cam.isOpened():
-        print("Error: Webcam could not be opened.")
-        sys.exit()
+    # 1. Force the V4L2 backend so OpenCV can directly control hardware exposure
+    cam = cv2.VideoCapture(4, cv2.CAP_V4L2)
 
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    # 2. Grab one frame first to start the camera hardware stream
+    cam.read()
+    time.sleep(0.1)
+
+    # 3. Switch from Auto Exposure (3) to Manual Exposure (1)
+    cam.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+
+    cam.set(cv2.CAP_PROP_EXPOSURE, 600)      # Push exposure higher
+    cam.set(cv2.CAP_PROP_GAIN, 120)          # Boost hardware sensor gain
+    cam.set(cv2.CAP_PROP_BRIGHTNESS, 150)
+
+    # 5. Flush 5 frames so the new manual exposure takes effect immediately
+    for _ in range(5):
+        cam.read()
+
+    # Verify what the driver actually accepted
+    print("Actual Auto Exposure:", cam.get(cv2.CAP_PROP_AUTO_EXPOSURE))
+    print("Actual Exposure Value:", cam.get(cv2.CAP_PROP_EXPOSURE))
 
     if(memDebug):
         rss_memory = process.memory_info().rss
         print(f"Camera started!  Memory Usage: {rss_memory / (1024**2):.2f} MB")
+
+    # ret, frame = cam.read()
 
 def graphicInit():
     #Global var init
@@ -204,11 +233,13 @@ def BootScreen(): #Screen elements for boot animation (As well as nessecary CAN 
 
     for event in pygame.event.get(): #Handle events relating to the boot screen, and only the boot screen
             if event.type == pygame.QUIT:
+                CAN.write(0x1A3, 3, 0, 0, 0, 128)
                 pygame.quit()
                 sys.exit()
     
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    CAN.write(0x1A3, 3, 0, 0, 0, 128)
                     pygame.quit()
                     sys.exit()
 
@@ -230,13 +261,11 @@ def HomeScreen(): #Screen for elements of the home screen
 
     for event in pygame.event.get(): #Handle events relating to the home screen, and only the home screen
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
 
         if cameraButton.handle_event(event):
             flagArr[2] = 1
@@ -267,9 +296,9 @@ def CamScreen(): #Screen for elements of the camera view screen
     drawBorders(screen, BORDER_COLOR, width, height, bordWidth)
 
     #Read and convert camera feed
-    ret, frame = cam.read()
-    if ret and frame is not None:
-        image = cv2topygame(frame)
+    if cam.isOpened():
+        if ret and frame is not None:
+            image = cv2topygame(dispFrame)
 
     #Display camera feed and other onscreen elements
     screen.blit(image, (((width-image.width)/2), ((height-image.height)/3)))
@@ -278,13 +307,11 @@ def CamScreen(): #Screen for elements of the camera view screen
     #Handle events relating to the home screen, and only the home screen
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
 
         if cameraButton.handle_event(event):
             flagArr[2] = 0
@@ -340,13 +367,11 @@ def ConveyorScreen(): #Screen for elements of the conveyor control screen
     #Event handlers for all of the buttons
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
 
         if addSpeedButton.handle_event(event):
             convArr[0] = min(convArr[0] + 1, 100)
@@ -408,13 +433,11 @@ def ConfirmScreen(): #Screen for conveyor direction confirmation
     #Event handlers for all of the buttons
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
     
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
 
         if yConfButton.handle_event(event):
             if confirmArr[0] == 1:
@@ -449,13 +472,11 @@ def FaultScreen(): #Screen for elements of the fault screen
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
 
     if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
             
     #Update frame buffer        
     pygame.display.update()
@@ -483,13 +504,11 @@ def InfoScreen():
 
     for event in pygame.event.get(): #Handle events relating to the boot screen, and only the boot screen
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                shutdown()
     
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    shutdown()
 
             if homeButton.handle_event(event):
                 flagArr[5] = 0
@@ -543,13 +562,11 @@ def DemoScreen():
     #Event handlers for all of the buttons
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            shutdown()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                shutdown()
 
         # Digital 0 increment speed up and down (copied from conveyor screen)
         if d0bPlus.handle_event(event):
@@ -599,6 +616,16 @@ def DemoScreen():
     pygame.display.update()
     clock.tick(constArr[0])
 
+def shutdown():
+    CAN.Raw.write(0x1A3, 3, 0, 0, 0, 128)
+    CAN.Raw.write(0x1A3, 1, 1, 0, 1, 0)
+
+    for i in range(3):
+        CAN.Raw.write(0x1A3, 1, sortMap[i], 0, 0, 0)
+
+    pygame.quit()
+    sys.exit()
+
 #End of init, start rendering
 initTime = time.perf_counter()
 if timeDebug:
@@ -619,7 +646,38 @@ while True:
         #Update frame buffer        
         pygame.display.update()
         clock.tick(constArr[0])
-        
+
+    if cam.isOpened():
+        ret, frame = cam.read()
+        if ret and frame is not None:
+            if flagArr[8] == 0:
+                flagArr[8] = detect.init(frame, modelPath)
+
+            if not heyimsortinere:
+                crossFlag, _, dispFrame = detect.findobj(frame)
+                if crossFlag != -1:
+
+                    if crossFlag == 0:
+                        crossFlag = 1
+                    elif crossFlag == 1:
+                        crossFlag = 0
+
+                    print(crossFlag)
+                    sort[crossFlag] = sort[crossFlag] == 0
+                    CAN.Raw.write(0x1A3, 1, sortMap[crossFlag], 0, sort[crossFlag], 0)
+                    heyimsortinere = 1
+                    sortStartTime = time.perf_counter()
+            else:
+                dispFrame = frame
+
+    if heyimsortinere:
+        presentTime = time.perf_counter()
+        print(presentTime - sortStartTime)
+        if (presentTime - sortStartTime) > 10:
+            sort[crossFlag] = sort[crossFlag] == 0
+            CAN.Raw.write(0x1A3, 1, sortMap[crossFlag], 0, sort[crossFlag], 0)
+            heyimsortinere = 0
+
     if(memDebugLoop):
         rss_memory = process.memory_info().rss
         print(f"Current Process Memory Usage: {rss_memory / (1024**2):.2f} MB")

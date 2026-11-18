@@ -200,7 +200,6 @@ void writeAnalog(uint8_t pin, uint16_t val){
 void setup() {
   //Serial monitor init
   Serial.begin(115200);
-  while(!Serial){}
 
   //SPI Config
   SPI.setRX(0);
@@ -280,7 +279,7 @@ void loop() {
     delay(100);
     if(!pwm_halted){
       for(uint8_t i; i < numDigital; i++){
-        Serial.print(pwmsEnabled[i]);
+        //Serial.print(pwmsEnabled[i]);
         if(pwmsEnabled[i]){
           Serial.print("Pin "); Serial.print(i); Serial.println(" was enabled!");
           setPWM(i, 500, 0.0);
@@ -354,8 +353,8 @@ void loop1(){
   while(true){
   ESTOPCOUNT = digitalRead(ESTOP);
   if(ESTOPCOUNT > 0){
-    Serial.println(millis());
-    while(ESTOPCOUNT > 0){
+    Serial.println(micros());
+    while(ESTOPCOUNT > 0 && !STOPTHISMADNESS){
       //Serial.print("Estop counter: "); Serial.println(ESTOPCOUNT);
       uint8_t stop = digitalRead(ESTOP);
       if(stop){
@@ -364,9 +363,9 @@ void loop1(){
         ESTOPCOUNT = ESTOPCOUNT - 1;
       }
       if(ESTOPCOUNT > 10){
+        Serial.println(micros());
         STOPTHISMADNESS = 1;
-        Serial.println(millis());
-        break;
+        while(true){}
       }
     }
   }
@@ -379,7 +378,7 @@ void loop1(){
 
       //Decode buffer entry
       canDecode(rxBuffer[i].data);
-      Serial.println(modeFlag);
+      //Serial.println(modeFlag);
       if(modeIO == 1){
         //Read stuff
         switch(modeFlag){
@@ -402,7 +401,9 @@ void loop1(){
 
             //PWM Case
             case 3:
+              //Serial.println(pinNum);
               setPWM(pinNum, dataSeg, (pwmDuty/255.0));
+              Serial.print("Freq: "); Serial.println(dataSeg); Serial.print("Duty: "); Serial.println(pwmDuty/255.0); Serial.print("Pin: "); Serial.println(pinNum);
               if(pwmDuty == 0){
                 pwmsEnabled[pinNum] = 0;
               }else{

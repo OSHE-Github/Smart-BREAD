@@ -11,6 +11,7 @@ mcp = open_first_mcp2210()
 can = MCP2515(mcp, cs_pin=3, int_pin=4, osc_hz=16_000_000, bitrate=500_000)
 
 txBuf = array.array("B", [0,0,0,0,0,0,0,0])
+steppins = array.array("B", [0,0,0,0,0,0,0,0])
 
 
 if debugBitrate:
@@ -94,20 +95,16 @@ def write(address, mode, pin, bulkPins, data, duty):
 
     return 1
 
-write(0x1A3, 1, 1, 0, 1, 0)
-recieved = can.recv(time);
-if recieved is not None:
-    print("Recieved Data: " + bin((recieved.data[5] << 16) + (recieved.data[6] << 8) + recieved.data[7]))
+write(0x1A3, 1, 1, 0, 0, 0)
 write(0x1A3, 1, 2, 0, 1, 0)
-recieved = can.recv(time);
-if recieved is not None:
-    print("Recieved Data: " + bin((recieved.data[5] << 16) + (recieved.data[6] << 8) + recieved.data[7]))
+write(0x1A3, 3, 0, 0, 5000, 128)
 
 while True:
-    pin = input("Which PWM pin do I address? ")
-    speed = input("What speed should the motor run at? ")
+    pin = input("Which pin do I address? ")
 
-    write(0x1A3, 3, int(pin), 0, 500, int(255.0*(int(speed)/100.0)))
+    steppins[int(pin)] = steppins[int(pin)] == 0
+    write(0x1A3, 1, int(pin), 0, steppins[int(pin)], 0)
+
     recieved = can.recv(time);
     if recieved is not None:
         print("Recieved Data: " + bin((recieved.data[5] << 16) + (recieved.data[6] << 8) + recieved.data[7]))
